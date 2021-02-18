@@ -1,0 +1,94 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(#ff9020,#e36c4e,#d84242,#7a2477,#3d1b81);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+a {
+  padding: 10px;
+  font-size: .75em;
+}
+
+p {
+  font-size: 15px;
+  color: rgb(253, 228, 218);
+  font-weight: lighter;
+}
+
+.card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.45);
+  padding: 50px 25px 50px 25px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2), 0 5px 20px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.form-check-label,
+.login-space h1{
+  color: rgb(253, 228, 218);
+  font-weight: bold;
+}
+
+.form-check-label {
+  font-size: .75em;
+}
+
+.form-check-label input {
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+
+  width: 15px;
+  height: 15px;
+  border-radius: 100%;
+  border: 3px solid rgba(140, 140, 140, 0.45);
+  transition: border .25s linear;
+}
+
+.form-check-label input:checked {
+  border: 3px solid rgb(255, 90, 27); 
+}
+
+.form-group input {
+  border: 0;
+  border-bottom: 1px solid rgb(255, 90, 27);
+  background-color: inherit;
+}
+  
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.form-group input:focus {
+  background-color: rgba(0, 0, 0, 0.45);
+  color: rgb(220, 220, 220);
+}
+
+#btn {
+  background-color: rgb(255, 72, 0);
+  border: none;
+  border-radius: 10px;
+  color: rgb(220, 220, 220);
+  padding: 5px 10px;
+  margin-top: 35px;
+} 
+
+#btn:hover {
+  background-color: rgba(255, 72, 0, 0.75);
+}
+
