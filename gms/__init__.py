@@ -11,6 +11,7 @@ database = "app.db"
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
+
 def connection(db_file):
         con = sqlite3.connect(db_file)
         return con
