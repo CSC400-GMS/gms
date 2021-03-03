@@ -13,19 +13,19 @@
       <div class="row">
         <div class="col-xs-3 mx-auto">
           <div class="card">
-            <form class="login-space">
+            <form class="login-space" action="{{url_for('register')}}" method="post">
               <h1>Create Account</h1>
-              <div class="form-group"> 
-                <input type="fname" class="form-control" id="fname" placeholder="First Name">
-              </div>
-              <div class="form-group"> 
-                <input type="lname" class="form-control" id="lname" placeholder="Last Name">
-              </div>
-              <div class="form-group"> 
-                <input type="email" class="form-control" id="email" placeholder="Email">
+              <div class="form-group">
+                <input type="fname" class="form-control" name="fname" placeholder="First Name">
               </div>
               <div class="form-group">
-                <input type="password" class="form-control" id="password" placeholder="Password">
+                <input type="lname" class="form-control" name="lname" placeholder="Last Name">
+              </div>
+              <div class="form-group">
+                <input type="email" class="form-control" name="email" placeholder="Email">
+              </div>
+              <div class="form-group">
+                <input type="password" class="form-control" name="password" placeholder="Password">
               </div>
               <p>You Are A...</p>
               <div class="form-check-inline">
@@ -42,9 +42,9 @@
                 <label class="form-check-label">
                   <input type="radio" class="form-check-input" name="userclass">A Reviewer
                 </label>
-              </div>              
+              </div>
+            <input type ="submit" class="btn btn-default" id="btn" value="REGISTER">
             </form>
-            <a href="#" class="btn btn-default" id="btn">REGISTER</a>
             <a href="index.html">Already a member? Login Here</a>
           </div>
         </div>
