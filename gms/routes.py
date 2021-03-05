@@ -19,6 +19,11 @@ user_db = {}
 def load_user(id):
     return user_db.get(id)
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('Please login to view the page')
+    return redirect(url_for('index'))
+
 @app.route('/',methods=['GET','POST'])
 def index():
 
@@ -60,3 +65,8 @@ def register():
 @login_required
 def homepage():
     return render_template('homepage.html')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
