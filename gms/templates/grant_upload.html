@@ -47,7 +47,7 @@
 
             <div class="card-body">
 
-            <form action="{{url_for('grant_upload')}}", method='post'>
+            <form action="{{url_for('grant_upload')}}", method='post' enctype='multipart/form-data'>
               <div class="row">
                 <div class="col md-6">
 
@@ -91,7 +91,7 @@
 
               <div class="form-group">
               <label>Requirements</label>
-                <input type="file" class="form-control-file" name="title" placeholder="requirements">
+                <input type="file" class="form-control-file" name="file_up" readonly>
               </div>
 
             </div>

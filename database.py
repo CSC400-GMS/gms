@@ -35,3 +35,11 @@ def select_where(col, table, x, par):
     c.execute(x)
     l = c.fetchall()
     return l
+
+def select_all(table):
+    db = get_db()
+    c = db.cursor()
+    x = "select * FROM "+ table + ";"
+    c.execute(x)
+    l = c.fetchall()
+    return l

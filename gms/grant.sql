@@ -58,13 +58,12 @@ CREATE TABLE if not exists reports(
 );
 
 CREATE TABLE if not exists grants(
-  id int auto_increment NOT NULL,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   title VARCHAR(255) NOT NULL,
   sponsor VARCHAR(255) NOT NULL,
   requirements VARCHAR(255) NOT NULL,
   post_date datetime NOT NULL,
   submition_deadline datetime NOT NULL,
   added_by VARCHAR(255) NOT NULL,
-  PRIMARY KEY(id),
   FOREIGN KEY(added_by) references admin(id_num)
 );
