@@ -12,7 +12,9 @@ body {
   margin: 0;
   padding: 0;
   background: linear-gradient(#ff9020,#e36c4e,#d84242,#7a2477,#3d1b81);
-  font-family: Arial, Helvetica, sans-serif;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: 'Poppins', Helvetica, Arial, sans-serif;
 }
 
 
@@ -92,3 +94,123 @@ p {
   background-color: rgba(255, 72, 0, 0.75);
 }
 
+
+.container {
+  background-color: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 -7px 10px 3px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  flex-flow: column;
+  min-height: 100%;
+  min-width: 100%;
+  align-items: center;
+  align-self: center;
+  justify-content: space-around;
+}
+
+.item{
+  min-height: 0;
+  padding-bottom: 10px;
+}
+
+.expand {
+  background-color: rgba(25, 25, 25, 0.5);
+  color: rgba(253, 228, 218, 0.822);
+  font-size: 17px;
+  font-weight: 600;
+  width: 600px;
+  cursor: pointer;
+  padding: 20px;
+  margin-top: 50px;
+  text-align: left;
+  outline: none;
+  transition: 0.4s;
+  border: none;
+  box-shadow: 0 -7px 10px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 5px 5px 0px 0px;
+}
+
+.active {
+  border-radius: 5px;
+}
+
+.active, .expand:hover {
+  background-color: rgba(0, 0, 0, 0.65);
+  width: 600px;
+  overflow: hidden;
+}
+
+input[type="checkbox"] {
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  display: none;
+}
+
+input[type='checkbox'] + label:before {
+  font-family: 'Font Awesome 5 Free';
+  display: inline-block;
+}
+
+input[type='checkbox'] + label:before { 
+  content: "\f105";
+  font-weight:900;
+}
+
+input[type='checkbox']:checked + label:before {
+  content: "\f107";
+  font-weight:900;
+}
+
+.panel {
+  width: 600px;
+  padding: 5px 18px;
+  background-color: rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.panel p{
+  color: rgba(253, 228, 218, 0.9);
+}
+
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  background-color: rgba(245, 245, 245, 0.05);
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 15px;
+  text-decoration: none;
+  font-size: 25px;
+  color: rgba(253, 228, 218, 0.9);
+  display: block;
+}
+
+.sidenav a:hover, a:active {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: rgb(255, 72, 0);
+}
+
+@media screen and (max-width: 1000px) {
+  .sidenav {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidenav a {float: left;}
+  .sidenav .bottom {float: right;}
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  .sidenav a {
+    text-align: center;
+    float: none;
+  }
+}

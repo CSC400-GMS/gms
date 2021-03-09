@@ -35,3 +35,14 @@ def select_where(col, table, x, par):
     c.execute(x)
     l = c.fetchall()
     return l
+
+def query_grants():
+    db = get_db()
+    c = db.cursor()
+    c.execute('select title, submition_deadline from grants')
+    l = c.fetchall()
+
+    if not l:
+        return "There are no grants at this time."
+    else:
+        return l
