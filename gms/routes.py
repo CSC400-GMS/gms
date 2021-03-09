@@ -8,10 +8,11 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 class User(UserMixin):
-    def __init__(self, email, fname, lname):
+    def __init__(self, email, fname, lname, account):
         self.id = email
         self.first_name = fname
         self.last_name = lname
+        self.account = account
 
 user_db = {}
 
@@ -33,12 +34,22 @@ def index():
     if request.method == "POST":
         if check_login(request.form['email']):
             user_info = select_where('*', 'account', 'email', request.form['email'])
+            print(user_info)
+            print(request.form['userclass'])
             valid_password = check_password_hash(user_info[0][1], request.form['password'])
-            if valid_password:
-                user = User(user_info[0][0],user_info[0][1],user_info[0][2])
-                user_db[user_info[0][0]] = user
-                login_user(user)
+            if valid_password and request.form['userclass'] == user_info[0][2]:
+                acc_info = select_where('*', request.form['userclass'], 'email', request.form['email'])
+                if request.form['userclass'] == 'admin':
+                    user = User(user_info[0][0], acc_info[0][2], acc_info[0][3], user_info[0][1])
+                    user_db[user_info[0][0]] = user
+                    login_user(user)
+                else:
+                    user = User(user_info[0][0], acc_info[0][1], acc_info[0][2], user_info[0][1])
+                    user_db[user_info[0][0]] = user
+                    login_user(user)
                 return redirect(url_for('homepage'))
+            else:
+                flash('wrong password')
         else:
             flash("That login does not exist")
 
@@ -47,14 +58,31 @@ def index():
 @app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
+        id_num = 0
         fname = request.form['fname']
         lname = request.form['lname']
         email = request.form['email']
         password = generate_password_hash(request.form['password'])
+        account = request.form['userclass']
 
-        sql = "INSERT into account values(?, ?, ?, ?)"
-        data = (email, password, fname, lname)
+        print(account)
+
+        sql = "INSERT into account values(?, ?, ?)"
+        data = (email, password, account)
         insert(sql,data)
+
+        if account == 'admin':
+            admin_sql = "INSERT into admin values(?, ?, ?, ?)"
+            admin_data = (id_num, email, fname, lname)
+            insert(admin_sql, admin_data)
+        elif account == 'reviewer':
+            re_sql = "INSERT into reviewer values(?, ?, ?)"
+            re_data = (email, fname, lname)
+            insert(re_sql, re_data)
+        elif account == 'researcher':
+            gs_sql = "INSERT into researcher values(?, ?, ?)"
+            gs_data = (email, fname, lname)
+            insert(gs_sql, gs_data)
 
         flash('You have successfully registered!')
 
@@ -65,6 +93,13 @@ def register():
 @login_required
 def homepage():
     return render_template('homepage.html')
+
+@app.route('/grantupload', methods=['GET', 'POST'])
+def grant_upload():
+    if request.method == 'POST':
+        date = request.form['deadline']
+        print('HELLO' + " "+ date)
+    return render_template('grant_upload.html')
 
 @app.route('/logout')
 def logout():
