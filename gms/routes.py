@@ -34,7 +34,7 @@ def unauthorized():
 def index():
 
     if current_user.is_authenticated:
-        return redirect(url_for('homepage'))
+        return redirect(url_for('dashboard'))
 
     if request.method == "POST":
         if check_login(request.form['email']):
@@ -42,6 +42,7 @@ def index():
             print(user_info)
             print(request.form['userclass'])
             valid_password = check_password_hash(user_info[0][1], request.form['password'])
+
             if valid_password and request.form['userclass'] == user_info[0][2]:
                 acc_info = select_where('*', request.form['userclass'], 'email', request.form['email'])
                 if request.form['userclass'] == 'admin':
@@ -52,7 +53,7 @@ def index():
                     user = User(user_info[0][0], acc_info[0][1], acc_info[0][2], user_info[0][1])
                     user_db[user_info[0][0]] = user
                     login_user(user)
-                return redirect(url_for('homepage'))
+                return redirect(url_for('dashboard'))
             else:
                 flash('wrong password')
         else:
@@ -94,6 +95,26 @@ def register():
         return redirect(url_for('index'))
     else:
         return render_template('register.html')
+
+@app.route('/dashboard', methods=['GET','POST'])
+def dashboard():
+    assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
+    pending = select_where('*', 'proposals', 'approved', 'NULL')
+
+    if not assign:
+        assign = "No proposals to assign at this time."
+
+    if not pending:
+        pending = "No proposals to review at this time."
+
+    return render_template('admindash.html', assign=assign, pending=pending)
+
+@app.route('/grants', methods=['GET','POST'])
+def grants():
+    grants = query_grants()
+
+    return render_template('admingrants.html', grants=grants)
+
 @app.route('/homepage')
 @login_required
 def homepage():
@@ -133,6 +154,7 @@ def show():
     all = select_all('grants')
     print(all)
     return 'hello'
+
 #this takes the deadline submition from adding a new grant
 #and reformats it into a form appropiate for sql injection
 #YYYY-MM-DD HH:MI:SS

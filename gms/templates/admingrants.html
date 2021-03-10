@@ -1,0 +1,35 @@
+<DOCTYPE! html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Grants</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+ integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"crossorigin="anonymous">
+      <link rel="preconnect" href="https://fonts.gstatic.com">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+      <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha3
+84-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+    </head>
+    <body>
+      <script type="text/javascript" src="script.js"></script>
+      <div class="sidenav">
+        <a href="#">Admin</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="#">Messages</a>
+        <a href="{{ url_for('grants') }}">Grants</a>
+        <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
+      </div>
+      <div class="grant-container">
+        <div class="grant-item">
+        </div>
+        <div class="grant-item">
+          <a href="#" class="grant-list-item">
+	    <h5>{{ grants }}</h5>
+	    <p> There's gonna be a grant description here. </p>
+	  </a>
+        </div>
+      </div>
+    </body>
+  </html>
