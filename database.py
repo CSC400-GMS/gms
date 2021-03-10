@@ -36,6 +36,14 @@ def select_where(col, table, x, par):
     l = c.fetchall()
     return l
 
+def select_all(table):
+    db = get_db()
+    c = db.cursor()
+    x = "select * FROM "+ table + ";"
+    c.execute(x)
+    l = c.fetchall()
+    return l
+
 def query_grants():
     db = get_db()
     c = db.cursor()
@@ -46,3 +54,4 @@ def query_grants():
         return "There are no grants at this time."
     else:
         return l
+

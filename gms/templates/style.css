@@ -10,7 +10,7 @@ html {
 
 body {
   margin: 0;
-  padding: 0;
+  padding: 70px;
   background: linear-gradient(#ff9020,#e36c4e,#d84242,#7a2477,#3d1b81);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -61,7 +61,7 @@ p {
 }
 
 .form-check-label input:checked {
-  border: 3px solid rgb(255, 90, 27); 
+  border: 3px solid rgb(255, 90, 27);
 }
 
 .form-group input {
@@ -69,7 +69,7 @@ p {
   border-bottom: 1px solid rgb(255, 90, 27);
   background-color: inherit;
 }
-  
+
 .form-group input::placeholder {
   color: rgba(255, 255, 255, 0.65);
 }
@@ -86,9 +86,12 @@ p {
   color: rgb(220, 220, 220);
   padding: 5px 10px;
   margin-top: 35px;
-} 
+}
 
 #btn:hover {
   background-color: rgba(255, 72, 0, 0.75);
 }
 
+.panel input::placeholder{
+  color: rgb(0,0,0);
+}

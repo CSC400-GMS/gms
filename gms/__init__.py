@@ -3,9 +3,13 @@ import sqlite3
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 
+
+GRANTS_FOLDER = 'C:/Users/Joaoao/Documents/GitHub/CSC400-GMS/gms/gms/grants'
+
 app = Flask(__name__)
 app.config.from_object('config')
 app.config['SECRET_KEY'] = 'hard to guess string'
+app.config['GRANT'] = GRANTS_FOLDER
 
 database = "app.db"
 bootstrap = Bootstrap(app)
