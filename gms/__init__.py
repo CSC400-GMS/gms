@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 
 
-GRANTS_FOLDER = 'C:/Users/Joaoao/Documents/GitHub/CSC400-GMS/gms/gms/grants'
+GRANTS_FOLDER = 'gms/static/grants'
 
 app = Flask(__name__)
 app.config.from_object('config')
