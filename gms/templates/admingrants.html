@@ -21,15 +21,18 @@
         <a href="{{ url_for('grants') }}">Grants</a>
         <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
       </div>
-      <div class="grant-container">
+      <div class="container">
         <div class="grant-item">
         </div>
+	{% for grant in grants%} 
         <div class="grant-item">
           <a href="#" class="grant-list-item">
-	    <h5>{{ grants }}</h5>
+	    <h5>{{ grant[0] }}</h5>
+	    <h5>Date Posted: {{ grant[1] }}</h5>
 	    <p> There's gonna be a grant description here. </p>
 	  </a>
         </div>
+	{% endfor %}
       </div>
     </body>
   </html>
