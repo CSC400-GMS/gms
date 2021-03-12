@@ -34,7 +34,7 @@ def unauthorized():
 def index():
 
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('dashboard', usertype=current_user.account))
 
     if request.method == "POST":
         if check_login(request.form['email']):
@@ -53,9 +53,9 @@ def index():
                     user = User(user_info[0][0], acc_info[0][1], acc_info[0][2], user_info[0][1])
                     user_db[user_info[0][0]] = user
                     login_user(user)
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('dashboard', usertype=request.form['userclass']))
             else:
-                flash('wrong password')
+                flash('Wrong Password or Account Type')
         else:
             flash("That login does not exist")
 
@@ -96,19 +96,33 @@ def register():
     else:
         return render_template('register.html')
 
-@app.route('/dashboard', methods=['GET','POST'])
-def dashboard():
-    assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
-    pending = select_where('*', 'proposals', 'approved', 'NULL')
+@app.route('/dashboard/<usertype>', methods=['GET','POST'])
+def dashboard(usertype):
+    if usertype == 'admin':
+        assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
+        pending = select_where('*', 'proposals', 'approved', 'NULL')
 
-    if not assign:
-        assign = "No proposals to assign at this time."
+        if not assign:
+            assign = "No proposals to assign at this time."
 
-    if not pending:
-        pending = "No proposals to review at this time."
+        if not pending:
+            pending = "No proposals to review at this time."
 
-    return render_template('admindash.html', assign=assign, pending=pending)
+        return render_template('admindash.html', assign=assign, pending=pending)
 
+    elif usertype == 'researcher':
+        assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
+        pending = select_where ('*', 'proposals', 'approved', 'NULL')
+
+        if not assign:
+            assign = "No grants at this time"
+
+        if not pending:
+            pending = "No pending grants at this time"
+
+        return render_template('gsdash.html', assign=assign, pending=pending)
+    else:
+        return redirect(url_for('register'))
 @app.route('/grants', methods=['GET','POST'])
 def grants():
     grants = query_grants()
