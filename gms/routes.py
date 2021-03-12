@@ -126,22 +126,30 @@ def grant_upload():
         title = request.form['title']
         sponsor = request.form['sponsor']
         date = request.form['deadline']
-        file = request.files['file_up']
+        file = request.files['file']
 
-        deadline = format_datetime(date)
+        if date == "":
+            flash("Please enter a valid date.")
+        elif title == "" or sponsor == "":
+            flash("The Title or Sponsor was left blank")
+        else:
+            deadline = format_datetime(date)
+            now = datetime.now()
+            post_date = now.strftime("%Y-%m-%d %H:%M:%S")
+            #upload filename to db
 
-        now = datetime.now()
-        post_date = now.strftime("%Y-%m-%d %H:%M:%S")
-        print(post_date)
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['GRANT'], filename))
-        #upload filename to db
+            sql= "INSERT into grants(title, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?)"
+            values =(title, sponsor, filename, post_date, deadline, "admin_id")
+            insert(sql, values)
+            flash("The grant has been uploaded")
+        else:
+            flash('Upload the file requirements')
 
-        sql= "INSERT into grants(title, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?)"
-        values =(title, sponsor, filename, post_date, deadline, "admin_id")
-        insert(sql, values)
+
     return render_template('grant_upload.html')
 
 @app.route('/logout')
