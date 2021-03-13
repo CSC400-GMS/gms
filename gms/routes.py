@@ -34,7 +34,7 @@ def unauthorized():
 def index():
 
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard', usertype=current_user.account))
+        return redirect(url_for('dashboard'))
 
     if request.method == "POST":
         if check_login(request.form['email']):
@@ -53,7 +53,7 @@ def index():
                     user = User(user_info[0][0], acc_info[0][1], acc_info[0][2], user_info[0][1])
                     user_db[user_info[0][0]] = user
                     login_user(user)
-                return redirect(url_for('dashboard', usertype=request.form['userclass']))
+                return redirect(url_for('dashboard'))
             else:
                 flash('Wrong Password or Account Type')
         else:
@@ -97,7 +97,8 @@ def register():
         return render_template('register.html')
 
 @app.route('/dashboard/<usertype>', methods=['GET','POST'])
-def dashboard(usertype):
+def dashboard():
+    usertype = current_user.account
     if usertype == 'admin':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
         pending = select_where('*', 'proposals', 'approved', 'NULL')
