@@ -125,7 +125,7 @@ def dashboard(usertype):
         return redirect(url_for('register'))
 @app.route('/grants', methods=['GET','POST'])
 def grants():
-    grants = query_grants()
+    grants = select_all('grants')
 
     return render_template('admingrants.html', grants=grants)
 
