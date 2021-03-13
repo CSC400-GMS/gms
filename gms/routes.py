@@ -122,6 +122,17 @@ def dashboard():
             pending = "No pending grants at this time"
 
         return render_template('gsdash.html', assign=assign, pending=pending)
+    elif usertype == 'reviewer':
+        assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
+        pending = select_where ('*', 'proposals', 'approved', 'NULL')
+
+        if not assign:
+            assign = "No grants at this time"
+
+        if not pending:
+            pending = "No pending grants at this time"
+
+        return render_template('reviewerdash.html', assign=assign, pending=pending) 
     else:
         return redirect(url_for('register'))
 @app.route('/grants', methods=['GET','POST'])
