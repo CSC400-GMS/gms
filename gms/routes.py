@@ -34,26 +34,25 @@ def unauthorized():
 def index():
 
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard', usertype=current_user.account))
+        return redirect(url_for('dashboard'))
 
     if request.method == "POST":
         if check_login(request.form['email']):
             user_info = select_where('*', 'account', 'email', request.form['email'])
-            print(user_info)
-            print(request.form['userclass'])
             valid_password = check_password_hash(user_info[0][1], request.form['password'])
-
+            print(user_info[0][2])
+            print(request.form['userclass'])
             if valid_password and request.form['userclass'] == user_info[0][2]:
                 acc_info = select_where('*', request.form['userclass'], 'email', request.form['email'])
                 if request.form['userclass'] == 'admin':
-                    user = User(user_info[0][0], acc_info[0][2], acc_info[0][3], user_info[0][1])
+                    user = User(user_info[0][0], acc_info[0][2], acc_info[0][3], user_info[0][2])
                     user_db[user_info[0][0]] = user
                     login_user(user)
                 else:
-                    user = User(user_info[0][0], acc_info[0][1], acc_info[0][2], user_info[0][1])
+                    user = User(user_info[0][0], acc_info[0][1], acc_info[0][2], user_info[0][2])
                     user_db[user_info[0][0]] = user
                     login_user(user)
-                return redirect(url_for('dashboard', usertype=request.form['userclass']))
+                return redirect(url_for('dashboard'))
             else:
                 flash('Wrong Password or Account Type')
         else:
@@ -70,8 +69,6 @@ def register():
         email = request.form['email']
         password = generate_password_hash(request.form['password'])
         account = request.form['userclass']
-
-        print(account)
 
         sql = "INSERT into account values(?, ?, ?)"
         data = (email, password, account)
@@ -96,8 +93,10 @@ def register():
     else:
         return render_template('register.html')
 
-@app.route('/dashboard/<usertype>', methods=['GET','POST'])
-def dashboard(usertype):
+@app.route('/dashboard', methods=['GET','POST'])
+@login_required
+def dashboard():
+    usertype = current_user.account
     if usertype == 'admin':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
         pending = select_where('*', 'proposals', 'approved', 'NULL')
@@ -121,11 +120,22 @@ def dashboard(usertype):
             pending = "No pending grants at this time"
 
         return render_template('gsdash.html', assign=assign, pending=pending)
-    else:
-        return redirect(url_for('register'))
+
+    elif usertype == 'reviewer':
+        assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
+        pending = select_where ('*', 'proposals', 'approved', 'NULL')
+
+        if not assign:
+            assign = "No grants at this time"
+
+        if not pending:
+            pending = "No pending grants at this time"
+
+        return render_template('reviewerdash.html', assign=assign, pending=pending)
+
 @app.route('/grants', methods=['GET','POST'])
 def grants():
-    grants = query_grants()
+    grants = select_all('grants')
 
     return render_template('admingrants.html', grants=grants)
 
@@ -135,28 +145,42 @@ def homepage():
     return render_template('homepage.html')
 
 @app.route('/grantupload', methods=['GET', 'POST'])
+@login_required
 def grant_upload():
     if request.method == 'POST':
         title = request.form['title']
         sponsor = request.form['sponsor']
         date = request.form['deadline']
-        file = request.files['file_up']
+        file = request.files['file']
 
-        deadline = format_datetime(date)
+        if date == "":
+            flash("Please enter a valid date.")
+        elif title == "" or sponsor == "":
+            flash("The Title or Sponsor was left blank")
+        else:
+            deadline = format_datetime(date)
+            now = datetime.now()
+            post_date = now.strftime("%Y-%m-%d %H:%M:%S")
+            #upload filename to db
 
-        now = datetime.now()
-        post_date = now.strftime("%Y-%m-%d %H:%M:%S")
-        print(post_date)
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['GRANT'], filename))
-        #upload filename to db
+            sql= "INSERT into grants(title, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?)"
+            values =(title, sponsor, filename, post_date, deadline, "admin_id")
+            insert(sql, values)
+            flash("The grant has been uploaded")
+        else:
+            flash('Upload the file requirements')
 
-        sql= "INSERT into grants(title, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?)"
-        values =(title, sponsor, filename, post_date, deadline, "admin_id")
-        insert(sql, values)
+
     return render_template('grant_upload.html')
+
+@app.route('/proposalupload')
+@login_required
+def proposal_upload():
+    return render_template('proposal_upload.html')
 
 @app.route('/logout')
 def logout():

@@ -13,8 +13,8 @@
     <body>
       <script type="text/javascript" src="script.js"></script>
       <div class="sidenav">
-        <a href="#">Grant Seeker</a>
-        <a href="#">Dashboard</a>
+        <h1>Grant Seeker</h1>
+        <a href="{{ url_for('dashboard') }}"">Dashboard</a>
         <a href="#">Messages</a>
         <a href="{{ url_for('grants') }}">Grants</a>
         <a class="bottom" href="{{ url_for('logout') }}">Logout</a>

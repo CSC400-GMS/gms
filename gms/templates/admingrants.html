@@ -6,7 +6,6 @@
       <title>Grants</title>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"crossorigin="anonymous">
-      <link rel="preconnect" href="https://fonts.gstatic.com">
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
       <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha3
@@ -15,23 +14,25 @@
     <body>
       <script type="text/javascript" src="script.js"></script>
       <div class="sidenav">
-        <a href="#">Admin</a>
+        <h1>Admin</h1>
         <a href="{{ url_for('dashboard') }}">Dashboard</a>
         <a href="#">Messages</a>
         <a href="{{ url_for('grants') }}">Grants</a>
         <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
       </div>
-      <div class="container">
-        <div class="grant-item">
+      <div class="grants-list">
+        <div class="grants-header">
+          <h1>Grants</h1>
+          <a href="{{ url_for('grant_upload')  }}" id="btn"">Add New Grant</a>
         </div>
 	{% for grant in grants%} 
-        <div class="grant-item">
-          <a href="#" class="grant-list-item">
-	    <h5>{{ grant[0] }}</h5>
-	    <h5>Date Posted: {{ grant[1] }}</h5>
-	    <p> There's gonna be a grant description here. </p>
-	  </a>
-        </div>
+          <a href="#"  class="grant-list-item">
+            <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ grant[1] }}</h5>
+            <small>Date Posted: {{ grant[4] }} <br> Deadline: {{ grant[5] }}</small>
+            </div>
+            <p class="mb-1"> {{ grant[3] }}</p>
+          </a>
 	{% endfor %}
       </div>
     </body>

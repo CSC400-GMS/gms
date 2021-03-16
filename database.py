@@ -54,4 +54,3 @@ def query_grants():
         return "There are no grants at this time."
     else:
         return l
-

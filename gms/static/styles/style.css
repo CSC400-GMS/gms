@@ -18,6 +18,27 @@ body {
 }
 
 
+body::-webkit-scrollbar {
+  width: 9px;
+  opacity: 0.75;
+}
+
+/* Track */
+body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.9);
+}
+ 
+/* Handle */
+body::-webkit-scrollbar-thumb {
+  background: rgb(45, 45, 45); 
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+body::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
 a {
   padding: 10px;
   font-size: .75em;
@@ -29,6 +50,7 @@ p {
   font-weight: lighter;
 }
 
+.grant-container,
 .card {
   position: absolute;
   left: 50%;
@@ -70,6 +92,7 @@ p {
   border: 0;
   border-bottom: 1px solid rgb(255, 90, 27);
   background-color: inherit;
+  font-weight: bold;
 }
   
 .form-group input::placeholder {
@@ -79,6 +102,12 @@ p {
 .form-group input:focus {
   background-color: rgba(0, 0, 0, 0.45);
   color: rgb(220, 220, 220);
+  font-weight: bold;
+}
+
+.grant-list-item,
+#reg-link {
+  color:aqua;
 }
 
 #btn {
@@ -108,9 +137,32 @@ p {
   justify-content: space-around;
 }
 
-.item{
-  min-height: 0;
-  padding-bottom: 10px;
+.grants-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 -7px 10px 3px rgba(0, 0, 0, 0.2);
+  min-height: 100%;
+  max-width: 100%;
+}
+
+.grants-header {
+  display: flex;
+  align-self: flex-end;
+  min-width: 60%;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10;
+}
+
+.grants-header h1 {
+  font-weight: bold;
+}
+
+.grant-list-item {
+  align-self: flex-end;
+  min-width: 80%;
 }
 
 .expand {
@@ -184,6 +236,12 @@ input[type='checkbox']:checked + label:before {
   padding-top: 20px;
 }
 
+.sidenav h1 {
+  padding-left: 3px;
+  color: rgba(253, 228, 218, 0.9);
+  display: block;
+}
+
 .sidenav a {
   padding: 6px 8px 6px 15px;
   text-decoration: none;
@@ -197,7 +255,7 @@ input[type='checkbox']:checked + label:before {
   color: rgb(255, 72, 0);
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 700px), screen and (max-height: 400px){
   .sidenav {
     width: 100%;
     height: auto;
