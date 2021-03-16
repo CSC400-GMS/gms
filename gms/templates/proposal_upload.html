@@ -35,7 +35,15 @@
   .form-group input {
     color: rgb(255, 255, 255);
   }
+  .form-group textarea{
+    color: rgb(255,255,255);
+    background-color: inherit;
 
+  }
+  .form-group textarea:focus {
+    background-color: rgba(0, 0, 0, 0.45);
+    color: rgb(255, 255, 255);
+  }
 
 </style>
 
@@ -66,7 +74,7 @@
 
 
       <div class="row">
-	<label>Application Info</label>
+	<label>Application Info for Grant {{ id }}</label>
         <div class="col-md-4" id="contact-labels">
                   <label>Name</label>
                   <label>FT/PT</label>
@@ -75,11 +83,12 @@
 		  <label>Amount($)</label>
         </div>
         <div class="col-md-8" id="applicant-form">
-    <form action="{{url_for('grant_upload')}}", method='post' enctype='multipart/form-data'>
+    <form action="{{url_for('pro_submit')}}", method='post' enctype='multipart/form-data'>
 
 
         <div class="form-group">
           <input type="name" class="form-control" id="name" name="name">
+          <input type="text" class="form-control" id="grant" name="grant" value="{{id}}" style="display:none;">
         </div>
 
 	<div class="form-group">
@@ -94,9 +103,9 @@
 	</div>
 
         <div class="form-group">
-          <input type="text" class="form-control" name="Department">
+          <input type="text" class="form-control" name="department">
 	</div>
-	
+
 	<div class="form-group">
 	  <input type="text" class="form-control" name="email">
 	</div>
@@ -119,7 +128,7 @@
 		<label>Budget</label>
 	</div>
 	<div class="col-md-8" id="proposal-form">
-	
+
 	<div class="form-group">
 	  <input type="name" class="form-control" id="title" name="title">
 	</div>

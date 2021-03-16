@@ -63,7 +63,7 @@ p {
 }
 
 .form-check-label input:checked {
-  border: 3px solid rgb(255, 90, 27); 
+  border: 3px solid rgb(255, 90, 27);
 }
 
 .form-group input {
@@ -71,7 +71,7 @@ p {
   border-bottom: 1px solid rgb(255, 90, 27);
   background-color: inherit;
 }
-  
+
 .form-group input::placeholder {
   color: rgba(255, 255, 255, 0.65);
 }
@@ -88,7 +88,7 @@ p {
   color: rgb(220, 220, 220);
   padding: 5px 10px;
   margin-top: 35px;
-} 
+}
 
 #btn:hover {
   background-color: rgba(255, 72, 0, 0.75);
@@ -152,7 +152,7 @@ input[type='checkbox'] + label:before {
   display: inline-block;
 }
 
-input[type='checkbox'] + label:before { 
+input[type='checkbox'] + label:before {
   content: "\f105";
   font-weight:900;
 }

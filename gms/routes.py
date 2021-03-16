@@ -119,7 +119,7 @@ def dashboard():
             pending = "No pending grants at this time"
 
         return render_template('gsdash.html', assign=assign, pending=pending)
-   
+
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
         pending = select_where ('*', 'proposals', 'approved', 'NULL')
@@ -147,6 +147,7 @@ def grant_upload():
     if request.method == 'POST':
         title = request.form['title']
         sponsor = request.form['sponsor']
+        fund = request.form['fund']
         date = request.form['deadline']
         file = request.files['file']
 
@@ -164,8 +165,8 @@ def grant_upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['GRANT'], filename))
-            sql= "INSERT into grants(title, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?)"
-            values =(title, sponsor, filename, post_date, deadline, "admin_id")
+            sql= "INSERT into grants(title, fund, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?, ?)"
+            values=(title, fund, sponsor, filename, post_date, deadline, "admin_id")
             insert(sql, values)
             flash("The grant has been uploaded")
         else:
@@ -174,17 +175,52 @@ def grant_upload():
 
     return render_template('grant_upload.html')
 
-@app.route('/proposalupload')
-def proposal_upload():
-    return render_template('proposal_upload.html')
+@app.route('/proposalupload/<test>', methods=['GET'])
+def proposal_upload(test):
+
+
+    return render_template('proposal_upload.html', id=test)
+
+
+@app.route('/proposalsubmit', methods=['POST'])
+def pro_submit():
+
+    if request.method == 'POST':
+        name = request.form['name']
+        status = request.form['ftpt']
+        dept = request.form['department']
+        email = request.form['email']
+        amount = request.form['request']
+        id = request.form['grant']
+
+        title = request.form['title']
+        summary = request.form['summary']
+        needs= request.form['needs']
+        goals = request.form['goals']
+        timeline = request.form['timeline']
+        budget = request.form['budget']
+
+
+        now = datetime.now()
+        post_date = now.strftime("%Y-%m-%d %H:%M:%S")
+
+        sql = "INSERT into proposals(title, summary, needs, goals, timeline, funding_re, budget, grant_id, date_submitted, submitted_by) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        values = (title, summary, needs, goals, timeline, amount, budget, id, post_date, email)
+
+        insert(sql, values)
+
+        flash('WEll DONE')
+    return redirect(url_for('proposal_upload', test=id))
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/show')
-def show():
-    all = select_all('grants')
+@app.route('/show/<table>')
+def show(table):
+    print(table)
+    all = select_all(table)
     print(all)
     return 'hello'
 
