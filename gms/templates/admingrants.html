@@ -33,7 +33,7 @@
             </tr>
           </thead>
 	{% for grant in grants%}
-<<<<<<< HEAD
+
   <tbody>
     <tr class="gr" onclick="grantpage({{ grant[0] }})">
   <th scope="row">{{ grant[0] }}</th>
@@ -43,16 +43,6 @@
   <td>{{ grant[6] }}</td>
    </tr>
 
-
-=======
-          <tbody>
-            <tr class="gr" onclick="grantpage({{ grant[0] }})">
-              <th scope="row">{{ grant[0] }}</th>
-                <td>{{ grant[1] }}</td>
-                <td>{{ grant[2] }}</td>
-                <td>{{ grant[3] }}</td>
-           </tr>
->>>>>>> e20cf40d1b0e524e3b3f4974302cc1dfc57a37c9
 
 	{% endfor %}
          </tbody>
