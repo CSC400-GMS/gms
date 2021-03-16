@@ -35,7 +35,6 @@ th, td{
 
     </head>
     <body>
-      <script type="text/javascript" src="script.js"></script>
       <div class="sidenav">
         <a href="#">Admin</a>
         <a href="#">Dashboard</a>
@@ -43,49 +42,23 @@ th, td{
         <a href="{{ url_for('grants') }}">Grants</a>
         <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
       </div>
-      <div class="container">
-        <div class="grant-item">
-        </div>
 
-        <table class="table">
-  <thead>
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Title</th>
-      <th scope="col">Funding</th>
-      <th scope="col">Sponsor</th>
-      <th scope="col">Deadline</th>
-    </tr>
-  </thead>
-	{% for grant in grants%}
-  <tbody>
-    <tr class="gr" onclick="grantpage({{ grant[0] }})">
-  <th scope="row">{{ grant[0] }}</th>
-  <td>{{ grant[1] }}</td>
-  <td>{{ grant[2] }}</td>
-  <td>{{ grant[3] }}</td>
-  <td>{{ grant[6] }}</td>
-   </tr>
+<div class="container">
+<div clas="card">
+<div class="car-body">
+  <h1 class="card-title" style="color:rgb(255,255,255)">Hello</h1></div>
+  <iframe src="{{ loc }}">
+
+</div>
+</div>
+</div>
 
 
 
-  <!--      <div class="grant-item">
-          <a href="#" class="grant-list-item">
-	    <h5>{{ grant[0] }}</h5>
-	    <h5>Date Posted: {{ grant[1] }}</h5>
-	    <p> There's gonna be a grant description here. </p>
-	  </a>
-  </div> -->
-	{% endfor %}
-</tbody>
-</table>
 </div>
 
 <script>
-function grantpage(id){
-  location.replace('http://localhost:5000/grants'+"/"+id)
 
-}
 </script>
     </body>
   </html>

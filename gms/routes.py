@@ -119,7 +119,7 @@ def dashboard():
             pending = "No pending grants at this time"
 
         return render_template('gsdash.html', assign=assign, pending=pending)
-   
+
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
         pending = select_where ('*', 'proposals', 'approved', 'NULL')
@@ -137,6 +137,17 @@ def grants():
 
     return render_template('admingrants.html', grants=grants)
 
+@app.route('/grants/<grantid>', methods=['GET'])
+def showGrant(grantid):
+
+    grant = select_where('*', 'grants', 'id', grantid)
+    print('hello')
+    print(grant)
+    loc = "gms/static/grants/HW1.pdf"
+    print(loc)
+
+    return render_template('showgrants.html', grants=grant)
+
 @app.route('/homepage')
 @login_required
 def homepage():
@@ -147,6 +158,7 @@ def grant_upload():
     if request.method == 'POST':
         title = request.form['title']
         sponsor = request.form['sponsor']
+        fund = request.form['fund']
         date = request.form['deadline']
         file = request.files['file']
 
@@ -164,8 +176,8 @@ def grant_upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['GRANT'], filename))
-            sql= "INSERT into grants(title, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?)"
-            values =(title, sponsor, filename, post_date, deadline, "admin_id")
+            sql= "INSERT into grants(title, fund, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?, ?)"
+            values=(title, fund, sponsor, filename, post_date, deadline, "admin_id")
             insert(sql, values)
             flash("The grant has been uploaded")
         else:
