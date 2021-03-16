@@ -66,55 +66,88 @@
 
 
       <div class="row">
-        <div class="col-md-4" id="labels">
-                  <label>Title</label>
-                  <label >Sponsor</label>
-                  <label>Deadline</label>
-                  <label>Requirements</label>
+	<label>Application Info</label>
+        <div class="col-md-4" id="contact-labels">
+                  <label>Name</label>
+                  <label>FT/PT</label>
+                  <label>Department</label>
+                  <label>Email</label>
+		  <label>Amount($)</label>
         </div>
-
-        <div class="col-md-8" id="form">
+        <div class="col-md-8" id="applicant-form">
     <form action="{{url_for('grant_upload')}}", method='post' enctype='multipart/form-data'>
 
 
         <div class="form-group">
-          <input type="title" class="form-control" id="name" name="title">
+          <input type="name" class="form-control" id="name" name="name">
         </div>
 
-
-
+	<div class="form-group">
+	<div class="form-check form-check-inline">
+          <input type="radio" class="form-check-input" id="full" name="ftpt" value="full">
+	  <label class="form-check-label" for="full">Full-Time</label>
+	</div>
+	<div class="form-check form-check-inline">
+	  <input type="radio" class="form-check-input" id="part" name="ftpt" value="part">
+	  <label class="form-check-label" for="part">Part-Time</label>
+	</div>
+	</div>
 
         <div class="form-group">
-          <input type="text" class="form-control"name="sponsor">
-        </div>
+          <input type="text" class="form-control" name="Department">
+	</div>
+	
+	<div class="form-group">
+	  <input type="text" class="form-control" name="email">
+	</div>
 
+	<div class="form-group">
+	  <input type="number" class="form-control" name="request">
+	</div>
 
-
-
-        <div class="form-group" >
-          <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-
-      <input type="text" class="form-control datetimepicker-input" name="deadline" data-target="#datetimepicker1"  style="  background-color: rgba(0, 0, 0, 0.45);">
-      <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
-        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-        </div>
-        </div>
-        </div>
-
-
-
-      <div class="form-group">
-
-        <input type="file" class="form-control-file" name='file' >
       </div>
+</div>
 
+    <div class="row">
+	<label>Proposal</label>
+	<div class="col-md-4" id="proposal-labels">
+		<label>Title</label>
+		<label>Summary</label>
+		<label>Needs</label>
+		<label>Goals</label>
+		<label>Timeline</label>
+		<label>Budget</label>
+	</div>
+	<div class="col-md-8" id="proposal-form">
+	
+	<div class="form-group">
+	  <input type="name" class="form-control" id="title" name="title">
+	</div>
 
+	<div class="form-group">
+	  <textarea rows="1" class="form-control" id="summary" name="summary"></textarea>
+	</div>
 
-      <div class="form-group">
-          <button type ="submit" class="btn btn-default btn-lg btn-block" id="btn" value="submit">Add Grant</button>
-        </div>
-      </form>
-      </div>
+	<div class="form-group">
+	  <textarea rows="1" class="form-control" id="needs" name="needs"></textarea>
+	</div>
+
+	<div class="form-group">
+	  <textarea rows="2" class="form-control" id="goals" name="goals"></textarea>
+	</div>
+
+	<div class="form-group">
+	  <textarea rows="2" class="form-control" id="timeline" name="timeline"></textarea>
+	</div>
+
+	<div class="form-group">
+	  <textarea rows="2" class="form-control" id="budget" name="budget"></textarea>
+	</div>
+
+	<div class="form-group">
+	  <button type="submit" class="btn btn-default btn-lg btn-block" id="btn" value="submit">Submit Proposal</button>
+	</div>
+	</div>
 </div>
 
   </body>
