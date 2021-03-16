@@ -10,6 +10,7 @@
       <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha3
 84-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+
     </head>
     <body>
       <script type="text/javascript" src="script.js"></script>
@@ -20,20 +21,34 @@
         <a href="{{ url_for('grants') }}">Grants</a>
         <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
       </div>
-      <div class="grants-list">
-        <div class="grants-header">
-          <h1>Grants</h1>
-          <a href="{{ url_for('grant_upload')  }}" id="btn"">Add New Grant</a>
-        </div>
-	{% for grant in grants%} 
-          <a href="#"  class="grant-list-item">
-            <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ grant[1] }}</h5>
-            <small>Date Posted: {{ grant[4] }} <br> Deadline: {{ grant[5] }}</small>
-            </div>
-            <p class="mb-1"> {{ grant[3] }}</p>
-          </a>
+      <div class="grant-container">
+        <table class=" table table-hover table-borderless">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Title</th>
+              <th scope="col">Sponsor</th>
+              <th scope="col">Requirements</th>
+            </tr>
+          </thead>
+	{% for grant in grants%}
+          <tbody>
+            <tr class="gr" onclick="grantpage({{ grant[0] }})">
+              <th scope="row">{{ grant[0] }}</th>
+                <td>{{ grant[1] }}</td>
+                <td>{{ grant[2] }}</td>
+                <td>{{ grant[3] }}</td>
+           </tr>
 	{% endfor %}
-      </div>
+         </tbody>
+       </table>
+</div>
+
+<script>
+function grantpage(id){
+  location.replace('http://localhost:5000/grants'+"/"+id)
+
+}
+</script>
     </body>
   </html>

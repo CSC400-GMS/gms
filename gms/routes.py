@@ -131,7 +131,7 @@ def dashboard():
         if not pending:
             pending = "No pending grants at this time"
 
-        return render_template('reviewerdash.html', assign=assign, pending=pending)
+        return render_template('revdash.html', assign=assign, pending=pending)
 
 @app.route('/grants', methods=['GET','POST'])
 def grants():

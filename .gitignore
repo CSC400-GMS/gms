@@ -2,6 +2,7 @@
 # Editors
 .vscode/
 .idea/
+app.db
 
 # Vagrant
 .vagrant/
