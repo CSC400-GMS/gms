@@ -62,3 +62,4 @@ def select_where_null(col, table, x):
     c.execute(x)
     l = c.fetchall()
     return l
+
