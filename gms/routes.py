@@ -143,10 +143,12 @@ def showGrant(grantid):
     grant = select_where('*', 'grants', 'id', grantid)
     print('hello')
     print(grant)
-    loc = "gms/static/grants/HW1.pdf"
-    print(loc)
+    floc = url_for('static', filename="grants/HW1.pdf")
+    print(floc)
 
-    return render_template('showgrants.html', grants=grant)
+    pro_app = url_for('proposal_upload')
+
+    return render_template('showgrants.html', pro_app=pro_app, loc=floc)
 
 @app.route('/homepage')
 @login_required

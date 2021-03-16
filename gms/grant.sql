@@ -1,4 +1,3 @@
-
 CREATE TABLE if not exists account(
   email VARCHAR(255) NOT NULL,
   pass VARCHAR(255) NOT NULL,
@@ -37,7 +36,7 @@ CREATE TABLE if not exists proposals(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title VARCHAR(255) NOT NULL,
   summary VARCHAR(255) NOT NULL,
-  rationale VARCHAR(255) NOT NULL,
+  needs VARCHAR(255) NOT NULL,
   goals VARCHAR(255) NOT NULL,
   timeline VARCHAR(255) NOT NULL,
   funding_re INTEGER NOT NULL,
@@ -64,7 +63,7 @@ CREATE TABLE if not exists reports(
 );
 
 CREATE TABLE if not exists report_info(
-  id INTEGER PRIMARY KEY, 
+  id INTEGER PRIMARY KEY,
   score INTEGER NOT NULL,
   comments varchar(255) NOT NULL,
   FOREIGN KEY (id) references reports(id)
