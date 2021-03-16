@@ -83,7 +83,7 @@ def register():
             re_data = (email, fname, lname)
             insert(re_sql, re_data)
         elif account == 'researcher':
-            gs_sql = "INSERT into researcher values(?, ?, ?)"
+            gs_sql = "INSERT into researcher values(?, ?, ?, null, null)"
             gs_data = (email, fname, lname)
             insert(gs_sql, gs_data)
 
@@ -97,9 +97,9 @@ def register():
 def dashboard():
     usertype = current_user.account
     if usertype == 'admin':
-        assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
+        assign = select_where_null('*', 'proposals', 'assigned_reviewer')
         pending = select_where('*', 'proposals', 'approved', 'NULL')
-
+        test = select_all("proposals")
         if not assign:
             assign = "No proposals to assign at this time."
 
