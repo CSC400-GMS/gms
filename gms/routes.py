@@ -94,6 +94,7 @@ def register():
         return render_template('register.html')
 
 @app.route('/dashboard', methods=['GET','POST'])
+@login_required
 def dashboard():
     usertype = current_user.account
     if usertype == 'admin':
@@ -130,7 +131,8 @@ def dashboard():
         if not pending:
             pending = "No pending grants at this time"
 
-        return render_template('reviewerdash.html', assign=assign, pending=pending)
+        return render_template('revdash.html', assign=assign, pending=pending)
+
 @app.route('/grants', methods=['GET','POST'])
 def grants():
     grants = select_all('grants')
@@ -152,6 +154,7 @@ def homepage():
     return render_template('homepage.html')
 
 @app.route('/grantupload', methods=['GET', 'POST'])
+@login_required
 def grant_upload():
     if request.method == 'POST':
         title = request.form['title']
@@ -183,6 +186,7 @@ def grant_upload():
 
 
     return render_template('grant_upload.html')
+
 
 @app.route('/proposalupload/<test>', methods=['GET'])
 def proposal_upload(test):
