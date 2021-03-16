@@ -55,3 +55,10 @@ def query_grants():
     else:
         return l
 
+def select_where_null(col, table, x):
+    db = get_db()
+    c = db.cursor()
+    x = 'select '+col+' from '+table+' where '+x+' is NULL;'
+    c.execute(x)
+    l = c.fetchall()
+    return l
