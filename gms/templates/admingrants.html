@@ -60,7 +60,7 @@ th, td{
 	{% for grant in grants%}
   <tbody>
     <tr class="gr" onclick="grantpage({{ grant[0] }})">
-  <th scope="row"><a href ="{{ url_for('proposal_upload', grantid=grant[0]) }}" >{{ grant[0] }}</a></th>
+  <th scope="row">{{ grant[0] }}</th>
   <td>{{ grant[1] }}</td>
   <td>{{ grant[2] }}</td>
   <td>{{ grant[3] }}</td>
