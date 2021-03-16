@@ -6,51 +6,67 @@
       <title>Grants</title>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"crossorigin="anonymous">
+      <link rel="preconnect" href="https://fonts.gstatic.com">
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
       <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha3
 84-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+<style>
+.table {
+  position: absolute;
+  top:100px;
+  width: 70%;
+  border:solid;
+  border-color: rgb(255,255,255);
+}
+th, td{
+  color: rgb(255,255,255);
+  border:solid;
+  border-color: rgb(255,255,255);
+  text-align: center;
+}
+.gr:hover{
+  background-color: rgb(0,0,0,.45);
+}
+
+
+</style>
+
 
     </head>
     <body>
-      <script type="text/javascript" src="script.js"></script>
       <div class="sidenav">
-        <h1>Admin</h1>
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="#">Admin</a>
+        <a href="#">Dashboard</a>
         <a href="#">Messages</a>
         <a href="{{ url_for('grants') }}">Grants</a>
         <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
       </div>
 
-      <div class="grant-container">
-        <table class=" table table-hover table-borderless">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Title</th>
-              <th scope="col">Sponsor</th>
-              <th scope="col">Requirements</th>
-            </tr>
-          </thead>
-	{% for grant in grants%}
-          <tbody>
-            <tr class="gr" onclick="grantpage({{ grant[0] }})">
-              <th scope="row">{{ grant[0] }}</th>
-                <td>{{ grant[1] }}</td>
-                <td>{{ grant[2] }}</td>
-                <td>{{ grant[3] }}</td>
-           </tr>
+<div class="container">
+<div clas="card">
+<div class="car-body">
+  <h1 class="card-title" style="color:rgb(255,255,255)">Hello</h1>
+  <form action='{{pro_app}}'>
+    <button type='submit' class="btn btn-default btn-lg btn-block" id='btn'>APPLY</button>
+  <form>
+    <iframe src='{{loc }}' height="700" width="500">
 
-	{% endfor %}
-         </tbody>
-       </table>
+  </div>
+
+
+
+</div>
+
+</div>
+</div>
+
+
+
 </div>
 
 <script>
-function grantpage(id){
-  location.replace('http://localhost:5000/grants'+"/"+id)
 
-}
 </script>
     </body>
   </html>
