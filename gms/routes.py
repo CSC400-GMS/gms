@@ -137,6 +137,19 @@ def grants():
 
     return render_template('admingrants.html', grants=grants)
 
+@app.route('/grants/<grantid>', methods=['GET'])
+def showGrant(grantid):
+
+    grant = select_where('*', 'grants', 'id', grantid)
+    print('hello')
+    print(grant)
+    floc = url_for('static', filename="grants/HW1.pdf")
+    print(floc)
+
+    pro_app = url_for('proposal_upload')
+
+    return render_template('showgrants.html', pro_app=pro_app, loc=floc)
+
 @app.route('/homepage')
 @login_required
 def homepage():
