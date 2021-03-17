@@ -24,14 +24,26 @@
           <input type="checkbox" id="arrow1">
           <label class="expand" for="arrow1"> Recently Added Grants </label> 
           <div class="panel">
-	  <p>{{ assign }}</p>
+          {% if assign is not none %}
+          {% for a in assign %}
+	  <p>{{ a }}</p>
+          {% else %}
+          <p>No grants have been added recently.</p>
+          {% endfor %}
+          {% endif %}
           </div>
         </div>
         <div class="item">
           <input type="checkbox" id="arrow2">
           <label class="expand" for="arrow2"> Pending Applications</label> 
           <div class="panel">
-            <p>{{ pending }}</p>
+          {% if pending is not none %}
+          {% for p in pending %}
+            <p>{{ p }}</p>
+          {% else %}
+            <p>No pending applications.</p>
+          {% endfor %}
+          {% endif %}
           </div>
         </div>
         <div class="item">

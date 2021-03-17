@@ -14,7 +14,7 @@
       <script type="text/javascript" src="script.js"></script>
       <div class="sidenav">
         <a href="#">Reviewer</a>
-        <a href="#">Dashboard</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
         <a href="#">Messages</a>
         <a href="{{ url_for('grants') }}">Grants</a>
         <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
@@ -24,18 +24,30 @@
           <input type="checkbox" id="arrow1">
           <label class="expand" for="arrow1"> Recently Assigned Proposals </label> 
           <div class="panel">
+          {% if assign is not none %}
 	  {% for a in assign %}
-	  <div>
-	  <p>{{ a }}</p>
-	  </div>
+	    <div>
+	    <p>{{ a }}</p>
+          {% else %}
+            <p>No grants assigned at this time</p>
+	    </div>
 	  {% endfor %}
+          {% endif %}
           </div>
         </div>
         <div class="item">
           <input type="checkbox" id="arrow2">
           <label class="expand" for="arrow2">Completed Reviews</label> 
           <div class="panel">
-            <p>{{ pending }}</p>
+          {% if pending is not none %}
+          {% for p in pending %}
+            <div>
+            <p>{{ p }}</p>
+          {% else %}
+            <p>No pending grants at this time</p>
+            </div>
+          {% endfor %}
+          {% endif %}
           </div>
         </div>
         <div class="item">

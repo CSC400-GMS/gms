@@ -102,11 +102,6 @@ def dashboard():
         grant = join_where_null('*', 'proposals', 'grants', 'grant_id', 'id', 'proposals.assigned_reviewer')
         pending = select_where('*', 'proposals', 'approved', 'NULL')
         test = select_all("proposals")
-        if not assign:
-            assign = "No proposals to assign at this time."
-
-        if not pending:
-            pending = "No proposals to review at this time."
 
         return render_template('admindash.html', assign=assign, pending=pending, grant=grant)
 
@@ -114,23 +109,11 @@ def dashboard():
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
         pending = select_where ('*', 'proposals', 'approved', 'NULL')
 
-        if not assign:
-            assign = "No grants at this time"
-
-        if not pending:
-            pending = "No pending grants at this time"
-
         return render_template('gsdash.html', assign=assign, pending=pending)
 
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
         pending = select_where ('*', 'proposals', 'approved', 'NULL')
-
-        if not assign:
-            assign = "No grants at this time"
-
-        if not pending:
-            pending = "No pending grants at this time"
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 

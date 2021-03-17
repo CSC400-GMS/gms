@@ -25,13 +25,17 @@
           <label class="expand" for="arrow1"> Assign to Reviewers </label> 
           <div class="panel">
             <div class="d-flex w-100 justify-content-between">
+              {% if grants is not none%}
 	      {% for g in grant %}
 	      <div>
 		<a href="{{ url_for('reviewer_assignment', pid=g[0]) }}">
 		<h3 class="mb-1">{{ g[15] }} - {{ g[1] }}</h3>
 		</a>
-	      </div>
+              </div>
+              {% else %}
+                <p> No grants to assign at this time</p>
               {% endfor %}
+              {% endif %}
 	    </div>
           </div>
         </div>
@@ -39,18 +43,28 @@
           <input type="checkbox" id="arrow2">
           <label class="expand" for="arrow2"> Pending Final Decision</label> 
           <div class="panel">
+            <div class="d-flex w-100 justify-content-between">
+            {% if pending is not none %}
+            {% for p in pending %}
+            <div>
             <a href="#" class="grant-list-item">
-              <div class="d-flex w-100 justify-content-between">
-                <h3 class="mb-1">{{ pending }}</h3>
-              </div>
+                <h3 class="mb-1">{{ p }}</h3>
             </a>
+            </div>
+            {% else %}
+                <p>No proposals to review at this time</p>
+            {% endfor %}
+            {% endif %}
+            </div>
           </div>
         </div>
         <div class="item">
           <input type="checkbox" id="arrow3">
           <label class="expand" for="arrow3"> Data</label> 
           <div class="panel">
-	    <p></p>
+            <div class="d-flex w-100 justify-content-between">
+	      <p></p>
+            </div>
           </div>
         </div>
       </div>
