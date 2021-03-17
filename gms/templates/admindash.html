@@ -24,11 +24,15 @@
           <input type="checkbox" id="arrow1">
           <label class="expand" for="arrow1"> Assign to Reviewers </label> 
           <div class="panel">
-            <a href="#" class="grant-list-item">
-              <div class="d-flex w-100 justify-content-between">
-	        <h3 class="mb-1">{{ assign }}</h3>
-              </div>
-            </a>
+            <div class="d-flex w-100 justify-content-between">
+	      {% for g in grant %}
+	      <div>
+		<a href="{{ url_for('reviewer_assignment', pid=g[0]) }}">
+		<h3 class="mb-1">{{ g[15] }} - {{ g[1] }}</h3>
+		</a>
+	      </div>
+              {% endfor %}
+	    </div>
           </div>
         </div>
         <div class="item">

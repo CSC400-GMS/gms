@@ -63,3 +63,18 @@ def select_where_null(col, table, x):
     l = c.fetchall()
     return l
 
+def join(col, table1, table2, x, y):
+    db = get_db()
+    c = db.cursor()
+    x = 'select '+col+' from '+table1+' inner join '+table2+' ON '+table1+'.'+x+' = '+table2+'.'+y+';'
+    c.execute(x)
+    l = c.fetchall()
+    return l
+
+def join_where_null(col, table1, table2, x, y, z):
+    db = get_db()
+    c = db.cursor()
+    x = 'select '+col+' from '+table1+' inner join '+table2+' on '+table1+'.'+x+' = '+table2+'.'+y+' where '+z+' is NULL;'
+    c.execute(x)
+    l = c.fetchall()
+    return l

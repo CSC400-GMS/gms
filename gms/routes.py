@@ -99,6 +99,7 @@ def dashboard():
     usertype = current_user.account
     if usertype == 'admin':
         assign = select_where_null('*', 'proposals', 'assigned_reviewer')
+        grant = join_where_null('*', 'proposals', 'grants', 'grant_id', 'id', 'proposals.assigned_reviewer')
         pending = select_where('*', 'proposals', 'approved', 'NULL')
         test = select_all("proposals")
         if not assign:
@@ -107,7 +108,7 @@ def dashboard():
         if not pending:
             pending = "No proposals to review at this time."
 
-        return render_template('admindash.html', assign=assign, pending=pending)
+        return render_template('admindash.html', assign=assign, pending=pending, grant=grant)
 
     elif usertype == 'researcher':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
@@ -122,7 +123,7 @@ def dashboard():
         return render_template('gsdash.html', assign=assign, pending=pending)
 
     elif usertype == 'reviewer':
-        assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
+        assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
         pending = select_where ('*', 'proposals', 'approved', 'NULL')
 
         if not assign:
@@ -131,7 +132,7 @@ def dashboard():
         if not pending:
             pending = "No pending grants at this time"
 
-        return render_template('revdash.html', assign=assign, pending=pending)
+        return render_template('reviewerdash.html', assign=assign, pending=pending)
 
 @app.route('/grants', methods=['GET','POST'])
 def grants():
@@ -224,6 +225,38 @@ def pro_submit():
 
         flash('WEll DONE')
     return redirect(url_for('proposal_upload', test=id))
+
+@app.route('/assignment', methods=['POST'])
+def assign():
+
+    if request.method == 'POST':
+        email = request.form['email']
+        pid = request.form['pid']
+
+        #make sure reviewer exists
+        exists = check_login(email)
+
+        if exists:
+
+            sql = 'UPDATE proposals SET assigned_reviewer =? WHERE id=?'
+            values = (email, pid)
+        
+            db = get_db()
+            c = db.cursor()
+            c.execute(sql, values)
+            db.commit()
+
+            flash('Reviewer Assigned')
+        
+        else:
+            flash('Reviewer specified does not exist')
+    return redirect(url_for('reviewer_assignment', pid=pid))
+
+@app.route('/reviewer_assignment/<pid>', methods=['GET', 'POST'])
+def reviewer_assignment(pid):
+    proposal = select_where('*', 'proposals', 'id', pid)
+    return render_template('reviewassign.html', proposal=proposal, pid=pid)
+
 
 @app.route('/logout')
 def logout():
