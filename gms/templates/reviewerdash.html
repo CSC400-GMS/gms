@@ -24,7 +24,11 @@
           <input type="checkbox" id="arrow1">
           <label class="expand" for="arrow1"> Recently Assigned Proposals </label> 
           <div class="panel">
-	  <p>{{ assign[1] }}</p>
+	  {% for a in assign %}
+	  <div>
+	  <p>{{ a }}</p>
+	  </div>
+	  {% endfor %}
           </div>
         </div>
         <div class="item">
