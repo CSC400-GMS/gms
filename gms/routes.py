@@ -83,9 +83,16 @@ def register():
             re_data = (email, fname, lname)
             insert(re_sql, re_data)
         elif account == 'researcher':
-            gs_sql = "INSERT into researcher values(?, ?, ?, null, null)"
-            gs_data = (email, fname, lname)
+            #get user specific field values here to avoid error
+            #dept and status should return null if nothin is entered
+            dept = request.form['dept']
+            status = request.form['status']
+            gs_sql = "INSERT into researcher values(?, ?, ?, ?, ?)"
+            gs_data = (email, fname, lname, dept, status)
             insert(gs_sql, gs_data)
+            print(gs_data)
+            print(dept)
+            print(status)
 
         flash('You have successfully registered!')
 

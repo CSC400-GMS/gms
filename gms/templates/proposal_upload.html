@@ -135,14 +135,17 @@
 
 	<div class="form-group">
 	  <textarea rows="1" class="form-control" id="summary" name="summary"></textarea>
+	  <div><p id='summary-count'></p></div>
 	</div>
 
 	<div class="form-group">
 	  <textarea rows="1" class="form-control" id="needs" name="needs"></textarea>
+	  <div><p id='needs-count'></p></div>
 	</div>
 
 	<div class="form-group">
 	  <textarea rows="2" class="form-control" id="goals" name="goals"></textarea>
+	  <div><p id='goals-count'></p></div>
 	</div>
 
 	<div class="form-group">
@@ -164,6 +167,7 @@
 
 
 <script>
+	
 function delete_flash(flash){
     $(flash).parent().remove()
 }
@@ -172,6 +176,25 @@ $(function() {
   $('#datetimepicker1').datetimepicker();
 });
 
+//updates character count, event handler
+function update_key(tag, max){
+    var count = tag.val().length + 1;
+    if(count > max){
+        var val = tag.val();
+	var removed = val.substring(0, val.length-1);
+	tag.val(removed);
+    }
+    else {
+    document.getElementById(tag.attr('id') + '-count').innerHTML = count + "/" + max;
+    }
+}
+
+//updates character count on keydown, sample max of 300 chars
+$('#summary, #needs, #goals').keydown(function() {
+    var max = 300;
+    update_key($(this), max);
+    console.log($(this).attr('id'));
+});
 
 
 

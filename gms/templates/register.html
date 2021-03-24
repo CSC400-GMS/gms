@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width">
     <title>Registration</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
   </head>
@@ -31,19 +32,20 @@
               <p>You Are A...</p>
               <div class="form-check-inline">
                 <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="userclass" value="researcher">A Grantseeker
+                  <input type="radio" class="form-check-input" name="userclass" value="researcher" onclick="add_fields()">A Grantseeker
                 </label>
               </div>
               <div class="form-check-inline">
                 <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="userclass" value="admin">An Admin
+                  <input type="radio" class="form-check-input" name="userclass" value="admin" onclick="delete_fields()">An Admin
                 </label>
               </div>
               <div class="form-check-inline">
                 <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="userclass" value="reviewer">A Reviewer
+                  <input type="radio" class="form-check-input" name="userclass" value="reviewer" onclick="delete_fields()">A Reviewer
                 </label>
               </div>
+	      <div class ='form-group' id='check'></div>
             <button type ="submit" class="btn btn-default btn-lg btn-block" id="btn" value="REGISTER">REGISTER</button>
             </form>
             <a href="/">Already a member? Login Here</a>
@@ -51,5 +53,32 @@
         </div>
       </div>
     </div>
+	<script>
+	//adds new form fields for the grant seeker.
+	//to avoid error, one radio button must be checked by default
+	function add_fields() {
+
+		if ( $('#label').length > 0){
+			return false;
+		}
+		else {
+		//check if fields exist
+		var $label = $("<div class='form-group' id='label'><p>Just a little more info...</p></div>");
+		var $dept = $("<div class='form-group' id='dept'><input type='dept' class='form-control' name='dept' placeholder='Department'></div>");
+		var $time = $("<div class='form-check-inline' name='time'><label class='form-check-label'><input type='radio' class='form-check-input' name='status' value='full'>Full Time</label></div><div class='form-check-inline'><label class='form-check-label' name='time'><input type='radio' class='form-check-input' name='status' value='part'>Part Time</label></div>");
+		($label).insertAfter('#check');
+		($dept).insertAfter('#label');
+		($time).insertAfter('#dept');
+		}
+		
+	}
+	//removes fields when you click another user type
+	function delete_fields() {
+		$('#label').remove();
+		$('#dept').remove();
+		$('[name="time"]').remove();
+	}
+
+	</script>
   </body>
 </html>
