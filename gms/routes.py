@@ -68,6 +68,7 @@ def register():
         lname = request.form['lname']
         email = request.form['email']
         password = generate_password_hash(request.form['password'])
+        dept = request.form['dept']
         account = request.form['userclass']
 
         sql = "INSERT into account values(?, ?, ?)"
@@ -75,12 +76,12 @@ def register():
         insert(sql,data)
 
         if account == 'admin':
-            admin_sql = "INSERT into admin values(?, ?, ?, ?)"
-            admin_data = (id_num, email, fname, lname)
+            admin_sql = "INSERT into admin values(?, ?, ?, ?, ?)"
+            admin_data = (id_num, email, fname, lname, dept)
             insert(admin_sql, admin_data)
         elif account == 'reviewer':
-            re_sql = "INSERT into reviewer values(?, ?, ?)"
-            re_data = (email, fname, lname)
+            re_sql = "INSERT into reviewer values(?, ?, ?, ?)"
+            re_data = (email, fname, lname, dept)
             insert(re_sql, re_data)
         elif account == 'researcher':
             #get user specific field values here to avoid error
@@ -109,8 +110,9 @@ def dashboard():
         grant = join_where_null('*', 'proposals', 'grants', 'grant_id', 'id', 'proposals.assigned_reviewer')
         pending = select_where('*', 'proposals', 'approved', 'NULL')
         test = select_all("proposals")
+        reviewer = select_all('reviewer')
 
-        return render_template('admindash.html', assign=assign, pending=pending, grant=grant)
+        return render_template('admindash.html', assign=assign, pending=pending, grant=grant, reviewer=reviewer)
 
     elif usertype == 'researcher':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
@@ -153,6 +155,7 @@ def grant_upload():
         fund = request.form['fund']
         date = request.form['deadline']
         file = request.files['file']
+        dept = request.form['dept']
 
         if date == "":
             flash("Please enter a valid date.")
@@ -168,8 +171,8 @@ def grant_upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['GRANT'], filename))
-            sql= "INSERT into grants(title, fund, sponsor, requirements, post_date, submition_deadline, added_by) values(?, ?, ?, ?, ?, ?, ?)"
-            values=(title, fund, sponsor, filename, post_date, deadline, "admin_id")
+            sql= "INSERT into grants(title, fund, sponsor, requirements, post_date, submition_deadline, added_by, dept) values(?, ?, ?, ?, ?, ?, ?, ?)"
+            values=(title, fund, sponsor, filename, post_date, deadline, "admin_id", dept)
             insert(sql, values)
             flash("The grant has been uploaded")
         else:
@@ -220,8 +223,11 @@ def pro_submit():
 def assign():
 
     if request.method == 'POST':
-        email = request.form['email']
-        pid = request.form['pid']
+        email = request.form['remail']
+        print(email)
+        seperate = email.split(" ")
+        email = seperate[0]
+        pid = seperate[1]
 
         #make sure reviewer exists
         exists = check_login(email)
@@ -230,23 +236,17 @@ def assign():
 
             sql = 'UPDATE proposals SET assigned_reviewer =? WHERE id=?'
             values = (email, pid)
-        
+
             db = get_db()
             c = db.cursor()
             c.execute(sql, values)
             db.commit()
 
             flash('Reviewer Assigned')
-        
+
         else:
             flash('Reviewer specified does not exist')
-    return redirect(url_for('reviewer_assignment', pid=pid))
-
-@app.route('/reviewer_assignment/<pid>', methods=['GET', 'POST'])
-def reviewer_assignment(pid):
-    proposal = select_where('*', 'proposals', 'id', pid)
-    return render_template('reviewassign.html', proposal=proposal, pid=pid)
-
+    return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 def logout():

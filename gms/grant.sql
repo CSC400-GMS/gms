@@ -10,6 +10,7 @@ CREATE TABLE if not exists admin(
   email VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   lastname VARCHAR(255) NOT NULL,
+  dept VARCHAR(50) NOT NULL,
   PRIMARY KEY (id_num),
   foreign KEY (email) references account(email)
 );
@@ -18,6 +19,7 @@ CREATE TABLE if not exists reviewer(
   email VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   lastname VARCHAR(255) NOT NULL,
+  dept VARCHAR(50) NOT NULL,
   PRIMARY KEY(email),
   foreign KEY (email) references account(email)
 );
@@ -64,7 +66,10 @@ CREATE TABLE if not exists reports(
 
 CREATE TABLE if not exists report_info(
   id INTEGER PRIMARY KEY,
-  score INTEGER NOT NULL,
+  signifigance INTEGER NOT NULL,
+  work_plan INTEGER NOT NULL,
+  outcomes INTEGER NOT NULL,
+  budget_proposal INTEGER NOT NULL,
   comments varchar(255) NOT NULL,
   FOREIGN KEY (id) references reports(id)
 );
@@ -78,5 +83,6 @@ CREATE TABLE if not exists grants(
   post_date datetime NOT NULL,
   submition_deadline datetime NOT NULL,
   added_by VARCHAR(255) NOT NULL,
+  dept VARCHAR(50) NOT NULL,
   FOREIGN KEY(added_by) references admin(id_num)
 );
