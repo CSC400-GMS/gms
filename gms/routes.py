@@ -1,5 +1,6 @@
 from gms import app
 import os
+import pdfkit
 from datetime import datetime
 from database import *
 from flask import render_template, request, redirect, url_for, flash
@@ -40,8 +41,6 @@ def index():
         if check_login(request.form['email']):
             user_info = select_where('*', 'account', 'email', request.form['email'])
             valid_password = check_password_hash(user_info[0][1], request.form['password'])
-            print(user_info[0][2])
-            print(request.form['userclass'])
             if valid_password and request.form['userclass'] == user_info[0][2]:
                 acc_info = select_where('*', request.form['userclass'], 'email', request.form['email'])
                 if request.form['userclass'] == 'admin':
@@ -112,7 +111,7 @@ def dashboard():
         test = select_all("proposals")
         reviewer = select_all('reviewer')
 
-        return render_template('admindash.html', assign=assign, pending=pending, grant=grant, reviewer=reviewer)
+        return render_template('admindash1.html', assign=assign, pending=pending, grant=grant, reviewer=reviewer)
 
     elif usertype == 'researcher':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
@@ -185,14 +184,15 @@ def grant_upload():
 @app.route('/proposalupload/<test>', methods=['GET'])
 def proposal_upload(test):
 
-
-    return render_template('proposal_upload.html', id=test)
+    taglist = select_all('tags')
+    return render_template('proposal_upload.html', id=test, taglist=taglist)
 
 
 @app.route('/proposalsubmit', methods=['POST'])
 def pro_submit():
 
     if request.method == 'POST':
+        print(request.form)
         name = request.form['name']
         status = request.form['ftpt']
         dept = request.form['department']
@@ -200,20 +200,20 @@ def pro_submit():
         amount = request.form['request']
         id = request.form['grant']
 
+
         title = request.form['title']
         summary = request.form['summary']
-        needs= request.form['needs']
-        goals = request.form['goals']
-        timeline = request.form['timeline']
+        workplan = request.form['workplan']
+        significance = request.form['significance']
+        outcome = request.form['outcome']
         budget = request.form['budget']
-
 
         now = datetime.now()
         post_date = now.strftime("%Y-%m-%d %H:%M:%S")
 
-        sql = "INSERT into proposals(title, summary, needs, goals, timeline, funding_re, budget, grant_id, date_submitted, submitted_by) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        values = (title, summary, needs, goals, timeline, amount, budget, id, post_date, email)
-
+        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, budget, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        values = (title, summary, workplan, significance, outcome, amount, budget, id, post_date, email)
+        
         insert(sql, values)
 
         flash('WEll DONE')
