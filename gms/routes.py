@@ -208,6 +208,8 @@ def pro_submit():
         outcome = request.form['outcome']
         budget = request.form['budget']
 
+        taglist = request.form.getlist('selected')
+
         now = datetime.now()
         post_date = now.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -215,6 +217,11 @@ def pro_submit():
         values = (title, summary, workplan, significance, outcome, amount, budget, id, post_date, email)
         
         insert(sql, values)
+        print(taglist)
+        for tag in taglist:
+            tag_sql = "INSERT INTO tagged_proposals(tag, proposal_id) VALUES(?, ?)"
+            values = (tag, id)
+            insert(tag_sql, values)
 
         flash('WEll DONE')
     return redirect(url_for('proposal_upload', test=id))

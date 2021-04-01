@@ -165,7 +165,7 @@
 
 	<div class="form-group">
 	  <label>Add Keywords</label>
-	  <select id='taglist' size='3' style='height: 100px; overflow; auto' multiple>
+	  <select id='taglist' size='3' style='height: 100px; overflow: auto' multiple>
 	    {% for tag in taglist %}
 	    <option value="{{ tag[0] }}" name="left" id="{{ tag[1] }}">{{ tag[1] }}</option>
 	    {% endfor %}
@@ -251,8 +251,9 @@ $('#removebtn').click(function () {
 
 //makes sure all selected tags are actually submitted with form
 $('#proposal_form').submit(function() {
-  $('right_taglist').forEach(function() {
-    $(this).attr('selected', True);
+    $('#right_taglist > option').each(function(i) {
+    $(this).attr('selected', true);
+    console.log($(this));
   });
 });
 
