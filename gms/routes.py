@@ -199,14 +199,13 @@ def pro_submit():
         email = request.form['email']
         amount = request.form['request']
         id = request.form['grant']
-
+        budget = request.form['budget']
 
         title = request.form['title']
         summary = request.form['summary']
         workplan = request.form['workplan']
         significance = request.form['significance']
         outcome = request.form['outcome']
-        budget = request.form['budget']
 
         taglist = request.form.getlist('selected')
 
@@ -221,15 +220,18 @@ def pro_submit():
                 "<h3>Workplan:</h3><p>"+workplan+"</p><br>" + \
                 "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
                 "<h3>Outcome:</h3><p>"+outcome+"</p><br>",
-                id+'.pdf'
+                "gms/static/proposals/"+id+'.pdf'
                 )
 
-
-        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, budget, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        #updating proposal info
+        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, budget, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"
         values = (title, summary, workplan, significance, outcome, amount, budget, id, post_date, email)
         
         insert(sql, values)
-        print(taglist)
+
+        #updating budget items
+
+        #updating tag/proposal
         for tag in taglist:
             tag_sql = "INSERT INTO tagged_proposals(tag, proposal_id) VALUES(?, ?)"
             values = (tag, id)
