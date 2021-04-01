@@ -111,7 +111,7 @@ def dashboard():
         test = select_all("proposals")
         reviewer = select_all('reviewer')
 
-        return render_template('admindash1.html', assign=assign, pending=pending, grant=grant, reviewer=reviewer)
+        return render_template('admindash.html', assign=assign, pending=pending, grant=grant, reviewer=reviewer)
 
     elif usertype == 'researcher':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
@@ -212,6 +212,18 @@ def pro_submit():
 
         now = datetime.now()
         post_date = now.strftime("%Y-%m-%d %H:%M:%S")
+
+        #creating pdf with html
+        pdfkit.from_string("<h1>"+title+"</h1>" + \
+                "<h1>Requested Funding: $"+amount+"</h1>"
+                "<h3>Applicant Name: "+name+" - Department: "+dept+" - "+status+" - Email Contact: "+email+"</h3><br>" + \
+                "<h3>Summary:</h3><p>"+summary+"</p><br>" + \
+                "<h3>Workplan:</h3><p>"+workplan+"</p><br>" + \
+                "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
+                "<h3>Outcome:</h3><p>"+outcome+"</p><br>",
+                id+'.pdf'
+                )
+
 
         sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, budget, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         values = (title, summary, workplan, significance, outcome, amount, budget, id, post_date, email)
