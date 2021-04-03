@@ -15,14 +15,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </head>
     <body>
-      <script type="text/javascript" src="script.js"></script>
-      <div class="sidenav">
-        <h1>Admin</h1>
-        <a href="{{ url_for('dashboard') }}">>Dashboard</a>
-        <a href="#">Messages</a>
-        <a href="{{ url_for('grants') }}">Grants</a>
-        <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
-      </div>
+      {% include 'sidenav.html' %}
       <div class="container">
         <div class="item">
           <input type="checkbox" id="arrow1">
@@ -118,14 +111,6 @@
             </div>
           </div>
         </div>
-
-
-
-
-
-
-
-
       </div>
 
 

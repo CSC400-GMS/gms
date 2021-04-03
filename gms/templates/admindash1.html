@@ -11,14 +11,7 @@
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
     </head>
     <body>
-      <script type="text/javascript" src="script.js"></script>
-      <div class="sidenav">
-        <h1>Admin</h1>
-        <a href="{{ url_for('dashboard') }}">>Dashboard</a>
-        <a href="#">Messages</a>
-        <a href="{{ url_for('grants') }}">Grants</a>
-        <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
-      </div>
+      {% include 'sidenav.html' %}
       <div class="container">
         <div class="item">    
           <input type="checkbox" id="arrow1">

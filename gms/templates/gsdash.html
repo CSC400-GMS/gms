@@ -9,16 +9,10 @@
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
       <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
     </head>
     <body>
-      <script type="text/javascript" src="script.js"></script>
-      <div class="sidenav">
-        <h1>Grant Seeker</h1>
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        <a href="#">Messages</a>
-        <a href="{{ url_for('grants') }}">Grants</a>
-        <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
-      </div>
+      {% include 'sidenav.html' %}
       <div class="container">
         <div class="item">    
           <input type="checkbox" id="arrow1">
@@ -56,9 +50,6 @@
       </div>
 
       <script>
-        var exp = document.getElementsByClassName("expand");
-        var i;
-
         for (i = 0; i < exp.length; i++) {
           exp[i].addEventListener("click", function() {
             this.classList.toggle("active");
@@ -69,6 +60,7 @@
               panel.style.display = "none";
             }
           });
-        }</script>
+        }
+      </script>
     </body>
   </html>

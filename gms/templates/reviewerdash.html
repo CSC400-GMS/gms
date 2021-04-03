@@ -11,51 +11,70 @@
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
     </head>
     <body>
-      <script type="text/javascript" src="script.js"></script>
-      <div class="sidenav">
-        <a href="#">Reviewer</a>
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        <a href="#">Messages</a>
-        <a href="{{ url_for('grants') }}">Grants</a>
-        <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
-      </div>
+      {% include 'sidenav.html' %}
       <div class="container">
         <div class="item">    
           <input type="checkbox" id="arrow1">
           <label class="expand" for="arrow1"> Recently Assigned Proposals </label> 
-          <div class="panel">
-          {% if assign is not none %}
-	  {% for a in assign %}
-	    <div>
-	    <p>{{ a }}</p>
+          <div class = "panel">
+            {% if assign %}
+	    <table class=" table table-hover table-borderless" id="dash-table">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Summary</th>
+                  <th scope="col">Researcher</th>
+                  <th scope="col">Submitted On</th>
+                </tr>
+              </thead>
+              <tbody>
+            {% for a in assign %}
+                <tr>
+                  <td> {{ a[1] }} </td>
+                  <td> {{ a[2] }} </td>
+                  <td> {{ a[12] }} </td>
+                  <td> {{ a[9] }}</td>
+                </tr>
+            {% endfor %}
+              </tbody>
+            </table>
           {% else %}
             <p>No grants assigned at this time</p>
-	    </div>
-	  {% endfor %}
           {% endif %}
           </div>
         </div>
         <div class="item">
           <input type="checkbox" id="arrow2">
-          <label class="expand" for="arrow2">Completed Reviews</label> 
+          <label class="expand" for="arrow2"> Completed Reviews</label> 
           <div class="panel">
-          {% if pending is not none %}
-          {% for p in pending %}
-            <div>
-            <p>{{ p }}</p>
+            {% if pending %}
+            <table class=" table table-hover table-borderless" id="dash-table">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Summary</th>
+                  <th scope="col">Researcher</th>
+                  <th scope="col">Submitted On</th>
+                  <th scope="col">Final Decision</th>
+                </tr>
+              </thead>
+            {% for p in pending %}
+              <tbody>
+                <tr>
+                  <td> {{ p[1] }} </td>
+                  <td> {{ p[2] }} </td>
+                  <td> {{ p[12] }} </td>
+                  <td> {{ p[9] }}</td>
+                  <td> {{ p[10] }}</td>
+                </tr>
+            {% endfor %}
+              </tbody>
+            </table>
           {% else %}
             <p>No pending grants at this time</p>
             </div>
-          {% endfor %}
-          {% endif %}
           </div>
-        </div>
-        <div class="item">
-          <input type="checkbox" id="arrow3">
-          <label class="expand" for="arrow3"> Data</label> 
-          <div class="panel">
-	    <p></p>
-          </div>
+         {% endif %}
         </div>
       </div>
 

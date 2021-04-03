@@ -48,15 +48,7 @@
 </style>
 
   <body>
-
-    <div class="sidenav">
-      <a href="#">Admin</a>
-      <a href="#">Dashboard</a>
-      <a href="#">Messages</a>
-      <a href="{{ url_for('grants') }}">Grants</a>
-      <a class="bottom" href="{{ url_for('logout') }}">Logout</a>
-    </div>
-
+      {% include 'sidenav.html' %}
     <div class="container">
 
       {% block content %}

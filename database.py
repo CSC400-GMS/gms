@@ -78,3 +78,16 @@ def join_where_null(col, table1, table2, x, y, z):
     c.execute(x)
     l = c.fetchall()
     return l
+
+''' 
+def update(sql, info):
+        db = get_db()
+        c = db.cursor()
+        c.execute(sql, info)
+        db.commit()
+
+def update()
+    db = get_db()
+    c = db.cursor()
+    x = 'update'+table+ ' set '+
+'''

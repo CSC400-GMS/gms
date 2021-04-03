@@ -267,6 +267,49 @@ def assign():
             flash('Reviewer specified does not exist')
     return redirect(url_for('dashboard'))
 
+
+
+@app.route('/account', methods=['GET','POST'])
+@login_required
+def account():
+    usertype = current_user.account
+    ini_email = current_user.id
+    if request.method == 'POST':
+        fname = request.form['fname']
+        lname = request.form['lname']
+        email = request.form['email']
+
+        if usertype == 'admin':
+            sql = 'UPDATE admin SET email=?, name=?, lastname=? WHERE email=?'
+            values = (email, fname, lname, ini_email)
+            insert(sql, values)
+
+        elif usertype == 'reviewer':
+            sql = 'UPDATE reviewer SET email=?, name=?, lastname=? WHERE email=?'
+            values = (email, fname, lname, ini_email)
+            insert(sql, values)
+
+        elif usertype == 'researcher':
+            sql = 'UPDATE researcher SET email=?, name=?, lastname=? WHERE email=?'
+            values = (email, fname, lname, ini_email)
+            insert(sql, values)
+
+        flash('Your account has been updated.', 'success')
+        return redirect(url_for('account'))
+
+    elif request.method == 'GET':
+        if usertype == 'admin':
+            account = select_all('admin')
+
+        elif usertype == 'reviewer':
+            account = select_all('reviewer')
+
+        elif usertype == 'researcher':
+            account = select_all('researcher')
+
+    return render_template('account_page.html', account=account)
+
+
 @app.route('/logout')
 def logout():
     logout_user()
