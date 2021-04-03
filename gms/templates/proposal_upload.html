@@ -51,7 +51,7 @@
   <body>
     {% include 'sidenav.html' %}
 
-    <div class="container">
+    <div class="pro-container">
 
       {% block content %}
 
@@ -67,24 +67,17 @@
       {% endblock %}
 
 
-      <div class="row">
-	<label>Application Info for Grant {{ id }}</label>
-        <div class="col-md-4" id="contact-labels">
-                  <label>Name</label>
-                  <label>FT/PT</label>
-                  <label>Department</label>
-                  <label>Email</label>
-		  <label>Amount($)</label>
-        </div>
     <form action="{{url_for('pro_submit')}}" id='proposal_form' method='post' enctype='multipart/form-data'>
-    <div class='col-md-8' id='applicant-form'>
-
+	<div class='pro-card'>
+	  <label>Application Form</label>
         <div class="form-group">
+	  <label>Name</label>
           <input type="name" class="form-control" id="name" name="name">
           <input type="text" class="form-control" id="grant" name="grant" value="{{id}}" style="display:none;">
         </div>
 
 	<div class="form-group">
+	<label>Status</label>
 	<div class="form-check form-check-inline">
           <input type="radio" class="form-check-input" id="full" name="ftpt" value="Full-Time">
 	  <label class="form-check-label" for="full">Full-Time</label>
@@ -96,24 +89,21 @@
 	</div>
 
         <div class="form-group">
+	  <label>Department</label>
           <input type="text" class="form-control" name="department">
 	</div>
 
 	<div class="form-group">
+	  <label>Email</label>
 	  <input type="text" class="form-control" name="email">
 	</div>
 
 	<div class="form-group">
+	  <label>Amount($)</label>
 	  <input type="number" class="form-control" name="request">
 	</div>
 
-      </div>
-</div>
-
-    <div class="row">
-	<label>Proposal</label>
-	<div class="col-md" id="proposal-form">
-
+	<label><b>Proposal Information</b></label>
 	<div class="form-group">
 	  <label>Title</label>
 	  <input type="name" class="form-control" id="title" name="title">
@@ -158,14 +148,14 @@
 
 	<div class="form-group">
 	  <label>Add Keywords</label>
-	  <select id='taglist' size='3' style='height: 100px; overflow: auto' multiple>
+	  <select id='taglist' size='3' style='height: 200px; overflow: auto' multiple>
 	    {% for tag in taglist %}
-	    <option value="{{ tag[0] }}" name="left" id="{{ tag[1] }}">{{ tag[1] }}</option>
+	    <option value="{{ tag[0] }}" name="left" id="{{ tag[1] }}" style='text-shadow: 0px 0px 0px black;'>{{ tag[1] }}</option>
 	    {% endfor %}
 	  </select>
           <button id='tagbtn' type='button'>Add</button>
 	  <button id='removebtn' type='button'>Remove</button>
-	  <select id='right_taglist' size='3' style='width: 250px; height: 100px; overflow: auto' name='selected' multiple>
+	  <select id='right_taglist' size='3' style='width: 250px; height: 200px; overflow: auto;' name='selected' multiple>
 	  </select>
 	</div>
 

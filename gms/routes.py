@@ -212,7 +212,7 @@ def pro_submit():
         #creating pdf with html
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>"
-                "<table><tr><td>Applicant Name: "+name+"</td></tr><tr><td>Department: "+dept+"</td></tr><tr><td>"+status+"</td></tr><tr><td>Email Contact: "+email+"</td></tr></table><br>" + \
+                "<table><tr><td>Applicant Name: "+name+"</td></tr><tr><td>Department: "+dept+" - "+status+"</td></tr><tr><td>Email Contact: "+email+"</td></tr></table><br>" + \
                 "<h3>Summary:</h3><p>"+summary+"</p><br>" + \
                 "<h3>Workplan:</h3><p>"+workplan+"</p><br>" + \
                 "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
