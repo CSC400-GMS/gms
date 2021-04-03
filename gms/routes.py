@@ -3,7 +3,7 @@ import os
 import pdfkit
 from datetime import datetime
 from database import *
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, send_from_directory, send_file
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
@@ -12,6 +12,7 @@ ALLOWED_EXTENSIONS = set(['pdf', 'doc', 'docx'])
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
 
 class User(UserMixin):
     def __init__(self, email, fname, lname, account):
@@ -90,9 +91,6 @@ def register():
             gs_sql = "INSERT into researcher values(?, ?, ?, ?, ?)"
             gs_data = (email, fname, lname, dept, status)
             insert(gs_sql, gs_data)
-            print(gs_data)
-            print(dept)
-            print(status)
 
         flash('You have successfully registered!')
 
@@ -164,9 +162,8 @@ def grant_upload():
             deadline = format_datetime(date)
             now = datetime.now()
             post_date = now.strftime("%Y-%m-%d %H:%M:%S")
-            #upload filename to db
-
-
+           
+           #upload filename to db
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['GRANT'], filename))
@@ -199,14 +196,13 @@ def pro_submit():
         email = request.form['email']
         amount = request.form['request']
         id = request.form['grant']
-
+        budget = request.form['budget']
 
         title = request.form['title']
         summary = request.form['summary']
         workplan = request.form['workplan']
         significance = request.form['significance']
         outcome = request.form['outcome']
-        budget = request.form['budget']
 
         taglist = request.form.getlist('selected')
 
@@ -216,20 +212,23 @@ def pro_submit():
         #creating pdf with html
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>"
-                "<h3>Applicant Name: "+name+" - Department: "+dept+" - "+status+" - Email Contact: "+email+"</h3><br>" + \
+                "<table><tr><td>Applicant Name: "+name+"</td></tr><tr><td>Department: "+dept+"</td></tr><tr><td>"+status+"</td></tr><tr><td>Email Contact: "+email+"</td></tr></table><br>" + \
                 "<h3>Summary:</h3><p>"+summary+"</p><br>" + \
                 "<h3>Workplan:</h3><p>"+workplan+"</p><br>" + \
                 "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
                 "<h3>Outcome:</h3><p>"+outcome+"</p><br>",
-                id+'.pdf'
+                "gms/static/proposals/"+id+'.pdf'
                 )
 
-
+        #updating proposal info
         sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, budget, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         values = (title, summary, workplan, significance, outcome, amount, budget, id, post_date, email)
-        
+
         insert(sql, values)
-        print(taglist)
+
+        #updating budget items
+
+        #updating tag/proposal
         for tag in taglist:
             tag_sql = "INSERT INTO tagged_proposals(tag, proposal_id) VALUES(?, ?)"
             values = (tag, id)
@@ -243,7 +242,7 @@ def assign():
 
     if request.method == 'POST':
         email = request.form['remail']
-        print(email)
+        print(current_user.id)
         seperate = email.split(" ")
         email = seperate[0]
         pid = seperate[1]
@@ -261,12 +260,15 @@ def assign():
             c.execute(sql, values)
             db.commit()
 
+            rsql = 'Insert into reports(proposal_id, reviewer, assigned_by) values(?,?,?)'
+            info = (pid, email, current_user.id)
+            insert(rsql, info)
+
             flash('Reviewer Assigned')
 
         else:
             flash('Reviewer specified does not exist')
     return redirect(url_for('dashboard'))
-
 
 
 @app.route('/account', methods=['GET','POST'])
@@ -308,6 +310,44 @@ def account():
             account = select_all('researcher')
 
     return render_template('account_page.html', account=account)
+
+@app.route('/review/<pro_id>', methods=['GET', 'POST'])
+@login_required
+def pro_review(pro_id):
+
+    if request.method == 'POST':
+        f = pro_id + '.pdf'
+        path = os.path.join('static/proposals/')
+        return send_file(path + f)
+        
+        
+    
+    if current_user.account == 'reviewer':
+        return render_template('pro_review.html', pro_id = pro_id)
+    else:
+        return redirect(url_for('dashboard'))
+
+@app.route('/re_submit', methods=['POST'])
+def review_submit():
+
+    if request.method == 'POST':
+        pro_id = request.form['pro_id']
+        sig = request.form['sig']
+        work = request.form['work']
+        outcomes = request.form['outcomes']
+        budget = request.form['budget']
+        comments = request.form['comments']
+
+        sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
+
+        id = sql_script(sql)
+        print(id)
+
+
+        sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
+        values = (id, sig, work, outcomes, budget, comments)
+        insert(sql, values)
+    return redirect(url_for('dashboard'))
 
 
 @app.route('/logout')

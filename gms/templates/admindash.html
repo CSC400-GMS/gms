@@ -25,7 +25,7 @@
               {% if grants is not none%}
 	      {% for g in grant %}
 	      <div>
-		<a style="display:inline-block;"href="{{ url_for('reviewer_assignment', pid=g[0]) }}">
+		<a style="display:inline-block;"href="{{ url_for('assign', pid=g[0]) }}">
 		<h3 style="margin-right:265px;"class="mb-1">{{ g[15] }} - {{ g[1] }}</h3>
 		</a>
     <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
