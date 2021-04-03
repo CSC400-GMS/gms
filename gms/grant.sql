@@ -49,8 +49,8 @@ CREATE TABLE if not exists proposals(
   approved_by INTEGER,
   submitted_by VARCHAR(255) NOT NULL,
   assigned_reviewer VARCHAR(255),
-  foreign KEY(assigned_reviewer) references reviewer(user_name),
-  foreign KEY(submitted_by) references researcher(user_name),
+  foreign KEY(assigned_reviewer) references reviewer(email),
+  foreign KEY(submitted_by) references researcher(email),
   foreign KEY(grant_id) references grants(id),
   foreign KEY(approved_by) references admin(id_num)
 );
@@ -60,7 +60,7 @@ CREATE TABLE if not exists reports(
   proposal_id int NOT NULL,
   reviewer varchar(255) NOT NULL,
   assigned_by int,
-  FOREIGN KEY(reviewer) references reviewer(user_name),
+  FOREIGN KEY(reviewer) references reviewer(email),
   FOREIGN KEY(proposal_id) references proposals(id)
 );
 
@@ -154,4 +154,3 @@ INSERT INTO tags(tag) VALUES ('Tracking');
 INSERT INTO tags(tag) VALUES ('Virtual Environments');
 INSERT INTO tags(tag) VALUES ('Virtualization');
 INSERT INTO tags(tag) VALUES ('Visual Analytics');
-

@@ -12,6 +12,14 @@ def get_db():
                 g.db = connection(database)
         return g.db
 
+def sql_script(sql):
+	db = get_db()
+	c = db.cursor()
+	c.execute(sql)
+	db.commit()
+
+
+
 def insert(sql, info):
 	db = get_db()
 	c = db.cursor()

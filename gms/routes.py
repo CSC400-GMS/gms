@@ -13,6 +13,7 @@ ALLOWED_EXTENSIONS = set(['pdf', 'doc', 'docx'])
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+
 class User(UserMixin):
     def __init__(self, email, fname, lname, account):
         self.id = email
@@ -212,7 +213,7 @@ def pro_submit():
         now = datetime.now()
         post_date = now.strftime("%Y-%m-%d %H:%M:%S")
 
-        #creating pdf with html
+        creating pdf with html
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>"
                 "<h3>Applicant Name: "+name+" - Department: "+dept+" - "+status+" - Email Contact: "+email+"</h3><br>" + \
@@ -224,9 +225,9 @@ def pro_submit():
                 )
 
         #updating proposal info
-        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, budget, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, budget, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         values = (title, summary, workplan, significance, outcome, amount, budget, id, post_date, email)
-        
+
         insert(sql, values)
 
         #updating budget items
@@ -245,7 +246,7 @@ def assign():
 
     if request.method == 'POST':
         email = request.form['remail']
-        print(email)
+        print(current_user.id)
         seperate = email.split(" ")
         email = seperate[0]
         pid = seperate[1]
@@ -263,11 +264,46 @@ def assign():
             c.execute(sql, values)
             db.commit()
 
+            rsql = 'Insert into reports(proposal_id, reviewer, assigned_by) values(?,?,?)'
+            info = (pid, email, current_user.id)
+            insert(rsql, info)
+
             flash('Reviewer Assigned')
 
         else:
             flash('Reviewer specified does not exist')
     return redirect(url_for('dashboard'))
+
+
+@app.route('/review/<pro_id>')
+@login_required
+def pro_review(pro_id):
+    if current_user.account == 'reviewer':
+        return render_template('pro_review.html', pro_id = pro_id)
+    else:
+        return redirect(url_for('dashboard'))
+@app.route('/re_submit', methods=['POST'])
+def review_submit():
+
+    if request.method == 'POST':
+        pro_id = request.form['pro_id']
+        sig = request.form['sig']
+        work = request.form['work']
+        outcomes = request.form['outcomes']
+        budget = request.form['budget']
+        comments = request.form['comments']
+
+        sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
+
+        id = sql_script(sql)
+        print(id)
+
+
+        sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
+        values = (id, sig, work, outcomes, budget, comments)
+        insert(sql, values)
+    return redirect(url_for('dashboard'))
+
 
 @app.route('/logout')
 def logout():
