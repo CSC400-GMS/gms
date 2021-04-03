@@ -43,6 +43,9 @@
       </div>
 
     <div class='container'>
+	    <form action="{{url_for('pro_review', pro_id=pro_id)}}" method='post' id='download'>
+      <button type='submit'>Download</button>
+      </form>
       <div class='item' style="width: 40%; ">
     <form  action="{{url_for('review_submit')}}" id='review_form' method='post' enctype='multipart/form-data'>
 	<input name="pro_id" value="{{pro_id}}" style="display:none;">

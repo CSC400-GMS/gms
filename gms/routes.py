@@ -3,7 +3,7 @@ import os
 import pdfkit
 from datetime import datetime
 from database import *
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, send_from_directory, send_file
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
@@ -91,9 +91,6 @@ def register():
             gs_sql = "INSERT into researcher values(?, ?, ?, ?, ?)"
             gs_data = (email, fname, lname, dept, status)
             insert(gs_sql, gs_data)
-            print(gs_data)
-            print(dept)
-            print(status)
 
         flash('You have successfully registered!')
 
@@ -165,9 +162,8 @@ def grant_upload():
             deadline = format_datetime(date)
             now = datetime.now()
             post_date = now.strftime("%Y-%m-%d %H:%M:%S")
-            #upload filename to db
-
-
+           
+           #upload filename to db
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['GRANT'], filename))
@@ -213,7 +209,7 @@ def pro_submit():
         now = datetime.now()
         post_date = now.strftime("%Y-%m-%d %H:%M:%S")
 
-        creating pdf with html
+        #creating pdf with html
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>"
                 "<h3>Applicant Name: "+name+" - Department: "+dept+" - "+status+" - Email Contact: "+email+"</h3><br>" + \
@@ -275,13 +271,22 @@ def assign():
     return redirect(url_for('dashboard'))
 
 
-@app.route('/review/<pro_id>')
+@app.route('/review/<pro_id>', methods=['GET', 'POST'])
 @login_required
 def pro_review(pro_id):
+
+    if request.method == 'POST':
+        f = pro_id + '.pdf'
+        path = os.path.join('static/proposals/')
+        return send_file(path + f)
+        
+        
+    
     if current_user.account == 'reviewer':
         return render_template('pro_review.html', pro_id = pro_id)
     else:
         return redirect(url_for('dashboard'))
+
 @app.route('/re_submit', methods=['POST'])
 def review_submit():
 
