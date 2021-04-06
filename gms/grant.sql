@@ -42,7 +42,6 @@ CREATE TABLE if not exists proposals(
   significance VARCHAR(255) NOT NULL,
   outcome VARCHAR(255) NOT NULL,
   funding_re INTEGER NOT NULL,
-  budget VARCHAR(255) NOT NULL,
   grant_id INTEGER NOT NULL,
   date_submitted datetime NOT NULL,
   approved binary,
@@ -98,6 +97,15 @@ CREATE TABLE if not exists tagged_proposals(
   FOREIGN KEY(tag) references tags(id),
   FOREIGN KEY(proposal_id) references proposals(id),
   PRIMARY KEY(tag, proposal_id)
+);
+
+CREATE TABLE if not exists budget(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  item VARCHAR(255) NOT NULL,
+  cost VARCHAR(255) NOT NULL,
+  justification VARCHAR(255) NOT NULL,
+  proposal_id INTEGER NOT NULL,
+  FOREIGN KEY(proposal_id) references proposals(id)
 );
 
 INSERT INTO tags(tag) VALUES ('Accelerators');

@@ -143,7 +143,10 @@
 
 	<div class="form-group">
 	  <label>Budget</label>
-	  <textarea rows="2" class="form-control" id="budget" name="budget"></textarea>
+	  <input type='text' name='budget'>
+	  <input type='text' name='budget'>
+	  <input type='text' name='budget'>
+	  <button type='button' id='add'>Add another item</button>
 	</div>
 
 	<div class="form-group">
@@ -189,20 +192,6 @@ function delete_flash(flash){
     $(flash).parent().remove()
 }
 
-
-//updates character count, event handler
-function update_key(tag, max){
-    var count = tag.val().length + 1;
-    if(count > max){
-        var val = tag.val();
-	var removed = val.substring(0, val.length-1);
-	tag.val(removed);
-    }
-    else {
-    document.getElementById(tag.attr('id') + '-count').innerHTML = count + "/" + max;
-    }
-}
-
 //updates character count on keydown, sample max of 300 chars
 $('#summary, #workplan, #significance, #outcome').keydown(function() {
     var max = 300;
@@ -231,6 +220,11 @@ $('#removebtn').click(function () {
     }
   });
 });
+
+$('#add').click(function() {
+  $('#add').before("<input type='text' name='budget'> <input type='text' name='budget'> <input type='text' name='budget'>");
+});
+;
 
 //makes sure all selected tags are actually submitted with form
 $('#proposal_form').submit(function() {

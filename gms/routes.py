@@ -196,8 +196,8 @@ def pro_submit():
         email = request.form['email']
         amount = request.form['request']
         id = request.form['grant']
-        budget = request.form['budget']
-
+        budget_items = request.form.getlist('budget')
+        
         title = request.form['title']
         summary = request.form['summary']
         workplan = request.form['workplan']
@@ -209,6 +209,20 @@ def pro_submit():
         now = datetime.now()
         post_date = now.strftime("%Y-%m-%d %H:%M:%S")
 
+        #updating proposal info
+        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        values = (title, summary, workplan, significance, outcome, amount, id, post_date, email)
+
+        insert(sql, values)
+
+        #getting new proposal ID
+        db = get_db()
+        c = db.cursor()
+        c.execute('SELECT last_insert_rowid();')
+        l = c.fetchall();
+        proposal_id = l[0][0]
+
+
         #creating pdf with html
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>"
@@ -217,21 +231,25 @@ def pro_submit():
                 "<h3>Workplan:</h3><p>"+workplan+"</p><br>" + \
                 "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
                 "<h3>Outcome:</h3><p>"+outcome+"</p><br>",
-                "gms/static/proposals/"+id+'.pdf'
-                )
+                "gms/static/proposals/"+str(proposal_id)+'.pdf')
 
-        #updating proposal info
-        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, budget, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        values = (title, summary, workplan, significance, outcome, amount, budget, id, post_date, email)
-
-        insert(sql, values)
+        #getting proposal_id
 
         #updating budget items
+        while len(budget_items) != 0:
+            item = budget_items.pop(0)
+            cost = budget_items.pop(0)
+            justification = budget_items.pop(0)
+
+            budget_sql = "INSERT INTO budget(item, cost, justification, proposal_id) VALUES(?, ?, ?, ?)"
+            values = (item, cost, justification, proposal_id)
+
+            insert(budget_sql, values)
 
         #updating tag/proposal
         for tag in taglist:
             tag_sql = "INSERT INTO tagged_proposals(tag, proposal_id) VALUES(?, ?)"
-            values = (tag, id)
+            values = (tag, proposal_id)
             insert(tag_sql, values)
 
         flash('WEll DONE')
