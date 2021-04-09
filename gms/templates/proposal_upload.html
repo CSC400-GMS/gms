@@ -143,9 +143,9 @@
 
 	<div class="form-group">
 	  <label>Budget</label>
-	  <input type='text' name='budget'>
-	  <input type='text' name='budget'>
-	  <input type='text' name='budget'>
+	  <input type='text' name='budget' placeholder='Item Name'>
+	  <input type='text' name='budget' placeholder='Item Cost'>
+	  <input type='text' name='budget' placeholder='Justification'>
 	  <button type='button' id='add'>Add another item</button>
 	</div>
 
@@ -222,7 +222,7 @@ $('#removebtn').click(function () {
 });
 
 $('#add').click(function() {
-  $('#add').before("<input type='text' name='budget'> <input type='text' name='budget'> <input type='text' name='budget'>");
+  $('#add').before("<input type='text' name='budget' placeholder='Item Name'> <input type='text' name='budget' placeholder='Item Cost'> <input type='text' name='budget' placeholder='Justification'>");
 });
 ;
 
