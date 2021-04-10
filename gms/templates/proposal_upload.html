@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
-																												   	
+
     <!-- include summernote css/js -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
@@ -52,19 +52,6 @@
     {% include 'sidenav.html' %}
 
     <div class="pro-container">
-
-      {% block content %}
-
-      {% for message in get_flashed_messages() %}
-      <div class="alert alert-warning alert-dismissable" style="color:rgb(0,0,0); position:absolute; top:100px; font-size: 1.5em;">
-          <button onclick=delete_flash(this) type="button" class="close" data-dismiss="alert">&times;</button>
-          {{ message }}
-      </div>
-      {% endfor %}
-
-      {% block page_content %}{% endblock %}
-
-      {% endblock %}
 
 
     <form action="{{url_for('pro_submit')}}" id='proposal_form' method='post' enctype='multipart/form-data'>
@@ -143,9 +130,9 @@
 
 	<div class="form-group">
 	  <label>Budget</label>
-	  <input type='text' name='budget'>
-	  <input type='text' name='budget'>
-	  <input type='text' name='budget'>
+	  <input type='text' name='budget' placeholder='Item Name'>
+	  <input type='text' name='budget' placeholder='Item Cost'>
+	  <input type='text' name='budget' placeholder='Justification'>
 	  <button type='button' id='add'>Add another item</button>
 	</div>
 
@@ -175,7 +162,7 @@
 
 <script>
 
-$(document).ready(function() { 
+$(document).ready(function() {
   $('#summary, #workplan, #significance, #outcome').each(function () {
     $(this).summernote({
       toolbar: [
@@ -222,7 +209,7 @@ $('#removebtn').click(function () {
 });
 
 $('#add').click(function() {
-  $('#add').before("<input type='text' name='budget'> <input type='text' name='budget'> <input type='text' name='budget'>");
+  $('#add').before("<input type='text' name='budget' placeholder='Item Name'> <input type='text' name='budget' placeholder='Item Cost'> <input type='text' name='budget' placeholder='Justification'>");
 });
 ;
 
