@@ -26,7 +26,7 @@
 	      {% for g in grant %}
 	      <div>
 		<a style="display:inline-block;"href="{{ url_for('assign', pid=g[0]) }}">
-		<h3 style="margin-right:265px;"class="mb-1">{{ g[15] }} - {{ g[1] }}</h3>
+		<h3 style="margin-right:265px;"class="mb-1">{{ g[14] }} - {{ g[1] }}</h3>
 		</a>
     <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
       Assign
@@ -39,7 +39,7 @@
 
           <!-- Modal Header -->
           <div class="modal-header">
-            <h4 style="font-weight: bold;" class="modal-title">Proposals for {{ g[15] }} </h4>
+            <h4 style="font-weight: bold;" class="modal-title">Proposals for {{ g[14] }} </h4>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
 
@@ -50,13 +50,13 @@
             Summary: {{ g[2] }}
             <br>
             <form  action="{{ url_for('assign') }}" method="post">
-              <p style="color:rgb(0,0,0); font-weight:bold;">Reviewers in the {{g[22]}} Depratment</p>
+              <p style="color:rgb(0,0,0); font-weight:bold;">Reviewers in the {{g[21]}} Depratment</p>
             <select style="font-weight: bold;" name="remail" class="custom-select" id="inputGroupSelect01">
               <option selected>Choose...</option>
               {% for r in reviewer %}
-                {% if r[3] == g[22] %}
+                {% if r[3] == g[21] %}
 
-                <option style="font-weight: bold;"  value="{{r[0]}} {{g[14]}}">{{r[1]}} {{r[2]}}</option>
+                <option style="font-weight: bold;"  value="{{r[0]}} {{g[13]}}">{{r[1]}} {{r[2]}}</option>
 
                 {% endif %}
               {% endfor %}
@@ -90,10 +90,65 @@
             <div class="d-flex w-100 justify-content-between">
             {% if pending is not none %}
             {% for p in pending %}
+
+            {% for re in re_info %}
+
+
             <div>
+              {% if p[9] is none %}
+
             <a href="#" class="grant-list-item">
-                <h3 class="mb-1">{{ p }}</h3>
+                <h3 class="mb-1">{{ p[1] }}</h3>
             </a>
+            <button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#appModal">
+              Decide
+            </button>
+            {%else%}
+                <p>No proposals to review at this time</p>
+            {% endif %}
+
+            <!-- The Modal -->
+            <div style="font-weight: bold;" class="modal" id="appModal">
+              <div class="modal-dialog">
+                <div class="modal-content">
+
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                    <h4 style="font-weight: bold;" class="modal-title">Proposal {{ p[0] }} </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+
+                  <!-- Modal body -->
+                  <div class="modal-body">
+                    Title: {{ p[1] }}
+                    <br>
+                    Summary: {{ p[2] }}
+                    <br>
+                    <form  action="{{ url_for('decide') }}" method="post">
+
+                      {% if  p[13] == re[0] %}
+                      <p>Signifigance = {{ re[1]}}</p>
+                      <p>Work Plan = {{ re[2]}}</p>
+                      <p>Outcomes = {{ re[3]}}</p>
+                      <p>Budget Proposal = {{ re[4]}}</p>
+                      <p>comments = {{ re[5]}}</p>
+
+                      {% endif %}
+                      {% endfor %}
+                <button style="font-weight: bold;" name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="accept">Accept</button>
+                <button style="font-weight: bold;" name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="decline">Decline</button>
+                </form>
+                  </div>
+
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
             </div>
             {% else %}
                 <p>No proposals to review at this time</p>
@@ -102,6 +157,12 @@
             </div>
           </div>
         </div>
+
+
+
+
+
+
         <div class="item">
           <input type="checkbox" id="arrow3">
           <label class="expand" for="arrow3"> Data</label>

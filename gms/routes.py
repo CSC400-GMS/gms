@@ -108,8 +108,10 @@ def dashboard():
         pending = select_where('*', 'proposals', 'approved', 'NULL')
         test = select_all("proposals")
         reviewer = select_all('reviewer')
+        approval = join('*', 'proposals', 'reports', 'id', 'proposal_id')
+        re_info = select_all('report_info')
 
-        return render_template('admindash.html', assign=assign, pending=pending, grant=grant, reviewer=reviewer)
+        return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info)
 
     elif usertype == 'researcher':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
@@ -120,6 +122,7 @@ def dashboard():
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
         pending = select_where ('*', 'proposals', 'approved', 'NULL')
+        print(assign)
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 
@@ -162,7 +165,7 @@ def grant_upload():
             deadline = format_datetime(date)
             now = datetime.now()
             post_date = now.strftime("%Y-%m-%d %H:%M:%S")
-           
+
            #upload filename to db
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
@@ -197,7 +200,7 @@ def pro_submit():
         amount = request.form['request']
         id = request.form['grant']
         budget_items = request.form.getlist('budget')
-        
+
         title = request.form['title']
         summary = request.form['summary']
         workplan = request.form['workplan']
@@ -224,14 +227,14 @@ def pro_submit():
 
 
         #creating pdf with html
-        pdfkit.from_string("<h1>"+title+"</h1>" + \
-                "<h1>Requested Funding: $"+amount+"</h1>"
-                "<table><tr><td>Applicant Name: "+name+"</td></tr><tr><td>Department: "+dept+" - "+status+"</td></tr><tr><td>Email Contact: "+email+"</td></tr></table><br>" + \
-                "<h3>Summary:</h3><p>"+summary+"</p><br>" + \
-                "<h3>Workplan:</h3><p>"+workplan+"</p><br>" + \
-                "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
-                "<h3>Outcome:</h3><p>"+outcome+"</p><br>",
-                "gms/static/proposals/"+str(proposal_id)+'.pdf')
+        # pdfkit.from_string("<h1>"+title+"</h1>" + \
+        #         "<h1>Requested Funding: $"+amount+"</h1>"
+        #         "<table><tr><td>Applicant Name: "+name+"</td></tr><tr><td>Department: "+dept+" - "+status+"</td></tr><tr><td>Email Contact: "+email+"</td></tr></table><br>" + \
+        #         "<h3>Summary:</h3><p>"+summary+"</p><br>" + \
+        #         "<h3>Workplan:</h3><p>"+workplan+"</p><br>" + \
+        #         "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
+        #         "<h3>Outcome:</h3><p>"+outcome+"</p><br>",
+        #         "gms/static/proposals/"+str(proposal_id)+'.pdf')
 
         #getting proposal_id
 
@@ -265,18 +268,17 @@ def assign():
         email = seperate[0]
         pid = seperate[1]
 
+
         #make sure reviewer exists
         exists = check_login(email)
 
+
         if exists:
 
-            sql = 'UPDATE proposals SET assigned_reviewer =? WHERE id=?'
+            sql = 'UPDATE proposals SET assigned_reviewer=\''+email+'\' WHERE id=\''+pid+'\';'
             values = (email, pid)
-
-            db = get_db()
-            c = db.cursor()
-            c.execute(sql, values)
-            db.commit()
+            print(sql)
+            sql_script(sql)
 
             rsql = 'Insert into reports(proposal_id, reviewer, assigned_by) values(?,?,?)'
             info = (pid, email, current_user.id)
@@ -286,6 +288,24 @@ def assign():
 
         else:
             flash('Reviewer specified does not exist')
+    return redirect(url_for('dashboard'))
+
+@app.route('/decision', methods=['POST'])
+def decide():
+
+    if request.method == 'POST':
+        if request.form['decide'] == 'accept':
+            sql = 'UPDATE proposals SET approved=1;'
+            sql_script(sql)
+            #get the admin id number to add to proposal table
+            sql = "UPDATE proposals SET approved_by="
+
+        elif request.form['decide'] == 'decline':
+            sql = 'UPDATE proposals SET approved=0;'
+            sql_script(sql)
+            #get the admin id number to add to proposal table
+            sql = "UPDATE proposals SET approved_by="
+
     return redirect(url_for('dashboard'))
 
 
@@ -337,9 +357,9 @@ def pro_review(pro_id):
         f = pro_id + '.pdf'
         path = os.path.join('static/proposals/')
         return send_file(path + f)
-        
-        
-    
+
+
+
     if current_user.account == 'reviewer':
         return render_template('pro_review.html', pro_id = pro_id)
     else:
