@@ -12,102 +12,105 @@
     </head>
     <body>
       {% include 'sidenav.html' %}
-      <div class="container">
-        {% block content %}
+      <section class="reviewer-dash">
+        <div class="reviewer-container">
+          {% block content %}
 
-        {% for message in get_flashed_messages() %}
-        <div class="alert alert-warning alert-dismissable" style="color:rgb(0,0,0); position:absolute; top:100px; font-size: 1.5em;">
-            <button onclick=delete_flash(this) type="button" class="close" data-dismiss="alert">&times;</button>
-            {{ message }}
-        </div>
-        {% endfor %}
-
-        {% block page_content %}{% endblock %}
-
-        {% endblock %}
-
-        <div class="item">
-          <input type="checkbox" id="arrow1">
-          <label class="expand" for="arrow1"> Recently Assigned Proposals </label> 
-          <div class = "panel">
-            {% if assign %}
-	    <table class=" table table-hover table-borderless" id="dash-table">
-              <thead>
-                <tr>
-                  <th scope="col">Title</th>
-                  <th scope="col">Summary</th>
-                  <th scope="col">Researcher</th>
-                  <th scope="col">Submitted On</th>
-                </tr>
-              </thead>
-              <tbody>
-            {% for a in assign %}
-                <tr onclick="window.location.href='{{url_for('pro_review', pro_id=a[0])}}'">
-                  <td> {{ a[1] }} </td>
-                  <td> {{ a[2] }} </td>
-                  <td> {{ a[12] }} </td>
-                  <td> {{ a[9] }}</td>
-                </tr>
-            {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
-            <p>No grants assigned at this time</p>
-          {% endif %}
+          {% for message in get_flashed_messages() %}
+          <div class="alert alert-warning alert-dismissable" style="color:rgb(0,0,0); position:absolute; top:100px; font-size: 1.5em;">
+              <button onclick=delete_flash(this) type="button" class="close" data-dismiss="alert">&times;</button>
+              {{ message }}
           </div>
-        </div>
-        <div class="item">
-          <input type="checkbox" id="arrow2">
-          <label class="expand" for="arrow2"> Completed Reviews</label>
-          <div class="panel">
-            {% if pending %}
-            <table class=" table table-hover table-borderless" id="dash-table">
-              <thead>
-                <tr>
-                  <th scope="col">Title</th>
-                  <th scope="col">Summary</th>
-                  <th scope="col">Researcher</th>
-                  <th scope="col">Submitted On</th>
-                  <th scope="col">Final Decision</th>
-                </tr>
-              </thead>
-            {% for p in pending %}
-              <tbody>
-                <tr onclick="window.location.href='{{url_for('pro_review', pro_id=a[0])}}'">
-                  <td> {{ p[1] }} </td>
-                  <td> {{ p[2] }} </td>
-                  <td> {{ p[12] }} </td>
-                  <td> {{ p[9] }}</td>
-                  <td> {{ p[10] }}</td>
-                </tr>
-            {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
-            <p>No pending grants at this time</p>
+          {% endfor %}
+
+          {% block page_content %}{% endblock %}
+
+          {% endblock %}
+
+          <div class="reviewer-item">
+            <input type="checkbox" id="arrow1">
+            <label class="reviewer-expand" for="arrow1"> Recently Assigned Proposals </label> 
+            <div class = "reviewer-panel">
+              {% if assign is not none %}
+              <table class=" table table-hover table-borderless" id="reviewer-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Summary</th>
+                    <th scope="col">Researcher</th>
+                    <th scope="col">Proposal Submitted</th>
+                    <th scope="col">Assigned For Review</th>
+                  </tr>
+                </thead>
+                <tbody>
+              {% for a in assign %}
+                  <tr onclick="window.location.href='{{ url_for('pro_review', pro_id=a[0]) }}';">
+                    <td> {{ a[1] }} </td>
+                    <td> {{ a[2] }} </td>
+                    <td> {{ a[11] }} </td>
+                    <td> {{ a[8] }}</td>
+                    <td> {{ a[13] }}</td>
+                  </tr>
+              {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p>No grants assigned at this time</p>
+            {% endif %}
             </div>
-          {% endif %}
+          </div>
+          <div class="reviewer-item">
+            <input type="checkbox" id="arrow2">
+            <label class="reviewer-expand" for="arrow2"> Completed Reviews</label>
+            <div class="reviewer-panel">
+              {% if pending is not none %}
+              <table class=" table table-borderless" id="reviewer-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Researcher</th>
+                    <th scope="col">Review Completed</th>
+                    <th scope="col">Final Decision</th>
+                  </tr>
+                </thead>              
+                <tbody>
+                  {% for p in pending %}
+                  <tr>
+                    <td> {{ p[6] }} </td>
+                    <td> {{ p[17] }} </td>
+                    <td> {{ p[4] }}</td>
+                    <td> {{ p[15] }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p>No pending grants at this time</p>
+            {% endif %}
+              </div>
+            </div>
           </div>
         </div>
 
-      <script>
-      function delete_flash(flash){
-          $(flash).parent().remove()
-      }
+        <script>
+        function delete_flash(flash){
+            $(flash).parent().remove()
+        }
 
-        var exp = document.getElementsByClassName("expand");
-        var i;
+          var exp = document.getElementsByClassName("reviewer-expand");
+          var i;
 
-        for (i = 0; i < exp.length; i++) {
-          exp[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var panel = this.nextElementSibling;
-            if (panel.style.display === "none") {
-              panel.style.display = "block";
-            } else {
-              panel.style.display = "none";
-            }
-          });
-        }</script>
+          for (i = 0; i < exp.length; i++) {
+            exp[i].addEventListener("click", function() {
+              this.classList.toggle("active");
+              var panel = this.nextElementSibling;
+              if (panel.style.display === "none") {
+                panel.style.display = "block";
+              } else {
+                panel.style.display = "none";
+              }
+            });
+          }</script>
+      </section>
     </body>
   </html>

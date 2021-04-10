@@ -119,7 +119,7 @@ def dashboard():
 
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
-        pending = select_where ('*', 'proposals', 'approved', 'NULL')
+        pending = join_where_null('*', 'reports', 'proposals', 'proposal_id', 'id', 'proposals.approved')
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 
@@ -219,7 +219,7 @@ def pro_submit():
         db = get_db()
         c = db.cursor()
         c.execute('SELECT last_insert_rowid();')
-        l = c.fetchall();
+        l = c.fetchall()
         proposal_id = l[0][0]
 
 
@@ -264,14 +264,16 @@ def assign():
         seperate = email.split(" ")
         email = seperate[0]
         pid = seperate[1]
+        now = datetime.now()
+        assigned = now.strftime("%Y-%m-%d %H:%M:%S")
 
         #make sure reviewer exists
         exists = check_login(email)
 
         if exists:
 
-            sql = 'UPDATE proposals SET assigned_reviewer =? WHERE id=?'
-            values = (email, pid)
+            sql = 'UPDATE proposals SET assigned_reviewer =?, date_assigned=? WHERE id=?'
+            values = (email, assigned, pid)
 
             db = get_db()
             c = db.cursor()
@@ -355,6 +357,8 @@ def review_submit():
         outcomes = request.form['outcomes']
         budget = request.form['budget']
         comments = request.form['comments']
+        now = datetime.now()
+        reviewed = now.strftime("%d %b %Y %H:%M:%S")
 
         sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
 
@@ -365,6 +369,17 @@ def review_submit():
         sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
         values = (id, sig, work, outcomes, budget, comments)
         insert(sql, values)
+
+        db = get_db()
+        c = db.cursor()
+        rsql = 'UPDATE reports SET rev_reviewed =? WHERE proposal_id=?'
+        val = (reviewed, pro_id)
+
+        
+        c.execute(rsql, val)
+        db.commit()
+        
+        
     return redirect(url_for('dashboard'))
 
 

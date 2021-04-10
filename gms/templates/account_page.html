@@ -18,7 +18,24 @@
           <div class="account-card">
             <div class="card-body">
               <h4 class="card-title">Account</h4>
-           {% for a in account %}
+            {% for a in account %}
+              {% if current_user.account == "admin" %}
+              <div class="form-group">
+                <label>First Name: </label>
+                <input type="fname" class="form-control" name="fname" value="{{ a[2] }}">
+              </div>
+              <div class="form-group">
+                <label>Last Name: </label>
+                <input type="lname" class="form-control" name="lname" value="{{ a[3] }}">
+              </div>
+              <div class="form-group">
+                <label>Email: </label>
+                <input type="email" class="form-control" name="email" value="{{ a[1] }}">
+              </div>
+              <div class ="form-group" id="check">
+                <button type ="submit" class="btn btn-default btn-lg btn-block" id="btn" value="Save">Save</button>
+              </div>
+              {% else %}
               <div class="form-group">
                 <label>First Name: </label>
                 <input type="fname" class="form-control" name="fname" value="{{ a[1] }}">
@@ -34,6 +51,7 @@
               <div class ="form-group" id="check">
                 <button type ="submit" class="btn btn-default btn-lg btn-block" id="btn" value="Save">Save</button>
               </div>
+              {% endif %}
             {% endfor %}
             </div> 
           </div>
