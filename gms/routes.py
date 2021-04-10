@@ -225,20 +225,8 @@ def pro_submit():
         l = c.fetchall();
         proposal_id = l[0][0]
 
-
-        #creating pdf with html
-        # pdfkit.from_string("<h1>"+title+"</h1>" + \
-        #         "<h1>Requested Funding: $"+amount+"</h1>"
-        #         "<table><tr><td>Applicant Name: "+name+"</td></tr><tr><td>Department: "+dept+" - "+status+"</td></tr><tr><td>Email Contact: "+email+"</td></tr></table><br>" + \
-        #         "<h3>Summary:</h3><p>"+summary+"</p><br>" + \
-        #         "<h3>Workplan:</h3><p>"+workplan+"</p><br>" + \
-        #         "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
-        #         "<h3>Outcome:</h3><p>"+outcome+"</p><br>",
-        #         "gms/static/proposals/"+str(proposal_id)+'.pdf')
-
-        #getting proposal_id
-
         #updating budget items
+        budgetT = ''
         while len(budget_items) != 0:
             item = budget_items.pop(0)
             cost = budget_items.pop(0)
@@ -246,14 +234,28 @@ def pro_submit():
 
             budget_sql = "INSERT INTO budget(item, cost, justification, proposal_id) VALUES(?, ?, ?, ?)"
             values = (item, cost, justification, proposal_id)
-
+            budgetT += "<tr><td>"+item+"</td><td>"+cost+"</td><td>"+justification+"</td></tr>"
             insert(budget_sql, values)
 
         #updating tag/proposal
+        tagString = ''
         for tag in taglist:
             tag_sql = "INSERT INTO tagged_proposals(tag, proposal_id) VALUES(?, ?)"
             values = (tag, proposal_id)
             insert(tag_sql, values)
+
+            tagString += tag+", "
+        conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        pdfkit.from_string("<h1>"+title+"</h1>" + \
+                "<h1>Requested Funding: $"+amount+"</h1>" + \
+                "<table><tr><td>Applicant Name: "+name+"</td></tr><tr><td>Department: "+dept+" - "+status+"</td></tr><tr><td>Email Contact: "+email+"</td></tr></table><br>" + \
+                "Tags: "+tagString+"<br>" + \
+                "<h3>Summary:</h3><p>"+summary+"</p><br>" + \
+                "<h3>Workplan</h3><p>"+workplan+"</p><br>" + \
+                "<h3>Significance:</h3><p>"+significance+"</p><br>" + \
+                "<h3>Outcome:</h3><p>"+outcome+"</p><br>" + \
+                "<h3>Budget</h3><table><tr><th>Budget Item</th><th>Cost</th><th>Justification</th></tr>"+budgetT+"</table>",
+                "gms/static/proposals/"+str(proposal_id)+".pdf", configuration=conf)
 
         flash('WEll DONE')
     return redirect(url_for('proposal_upload', test=id))
