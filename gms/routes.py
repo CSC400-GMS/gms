@@ -8,8 +8,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 
+#allowed extensions for grant file upload
 ALLOWED_EXTENSIONS = set(['pdf', 'doc', 'docx'])
 
+#login manager for flask_login and related functions
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -32,6 +34,7 @@ def unauthorized():
     flash('Please login to view the page')
     return redirect(url_for('index'))
 
+#main page, hanldes login
 @app.route('/',methods=['GET','POST'])
 def index():
 
@@ -60,9 +63,11 @@ def index():
 
     return render_template('index.html')
 
+#registration
 @app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
+        #system has only one administator, so we just set the id here
         id_num = 0
         fname = request.form['fname']
         lname = request.form['lname']
@@ -86,7 +91,6 @@ def register():
         elif account == 'researcher':
             #get user specific field values here to avoid error
             #dept and status should return null if nothin is entered
-            dept = request.form['dept']
             status = request.form['status']
             gs_sql = "INSERT into researcher values(?, ?, ?, ?, ?)"
             gs_data = (email, fname, lname, dept, status)
@@ -98,6 +102,8 @@ def register():
     else:
         return render_template('register.html')
 
+#main dashboard route, sends user to different template depending on user class
+#gathers info from database to be displayed on template
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
@@ -126,26 +132,28 @@ def dashboard():
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 
+#grants page, visible by all users. only admin can post grants, and
+#only grant seeker can apply
 @app.route('/grants', methods=['GET','POST'])
 def grants():
     grants = select_all('grants')
 
     return render_template('admingrants.html', grants=grants)
 
+#display page for displaying the requirements of a specific grant
+#shows off the requirements file uploaded during grant creation
 @app.route('/grants/<grantid>', methods=['GET'])
 def showGrant(grantid):
 
+    #ONLY PDF WILL BE SHOWN IN IFRAME
+    #uploading a .docx file will cause it to download (chrome)
     grant = select_where('*', 'grants', 'id', grantid)
-    floc = url_for('static', filename="grants/HW1.pdf")
+    floc = url_for('static', filename="grants/"+grant[0][4])
     pro_app = url_for('proposal_upload', test=grantid)
 
     return render_template('showgrants.html', pro_app=pro_app, loc=floc)
 
-@app.route('/homepage')
-@login_required
-def homepage():
-    return render_template('homepage.html')
-
+#only for admin, the form to post a new grant
 @app.route('/grantupload', methods=['GET', 'POST'])
 @login_required
 def grant_upload():
@@ -180,18 +188,19 @@ def grant_upload():
 
     return render_template('grant_upload.html')
 
-
+#route for uploading a proposal to a grant, supplies template with tag list from db
 @app.route('/proposalupload/<test>', methods=['GET'])
 def proposal_upload(test):
 
     taglist = select_all('tags')
     return render_template('proposal_upload.html', id=test, taglist=taglist)
 
-
+#logic for processing proposal submission, a few different things going on here
 @app.route('/proposalsubmit', methods=['POST'])
 def pro_submit():
 
     if request.method == 'POST':
+        #getting all data from form
         print(request.form)
         name = request.form['name']
         status = request.form['ftpt']
@@ -245,6 +254,8 @@ def pro_submit():
             insert(tag_sql, values)
 
             tagString += tag+", "
+
+        #generating and saving pdf
         conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>" + \
@@ -260,26 +271,23 @@ def pro_submit():
         flash('WEll DONE')
     return redirect(url_for('proposal_upload', test=id))
 
+#page for assigning reviewers, only visible by admin
 @app.route('/assignment', methods=['POST'])
 def assign():
 
     if request.method == 'POST':
         email = request.form['remail']
-        print(current_user.id)
         seperate = email.split(" ")
         email = seperate[0]
         pid = seperate[1]
 
-
         #make sure reviewer exists
         exists = check_login(email)
-
-
         if exists:
 
-            sql = 'UPDATE proposals SET assigned_reviewer=\''+email+'\' WHERE id=\''+pid+'\';'
-            values = (email, pid)
-            print(sql)
+            sql = "UPDATE proposals SET assigned_reviewer='"+email+"' WHERE id='"+pid+"';"
+            print(email)
+            print(pid)
             sql_script(sql)
 
             rsql = 'Insert into reports(proposal_id, reviewer, assigned_by) values(?,?,?)'
@@ -292,6 +300,7 @@ def assign():
             flash('Reviewer specified does not exist')
     return redirect(url_for('dashboard'))
 
+#only for admin, processes a grant decision
 @app.route('/decision', methods=['POST'])
 def decide():
 
@@ -310,7 +319,7 @@ def decide():
 
     return redirect(url_for('dashboard'))
 
-
+#account settings page, visible for all accounts
 @app.route('/account', methods=['GET','POST'])
 @login_required
 def account():
@@ -351,22 +360,29 @@ def account():
 
     return render_template('account_page.html', account=account)
 
+#proposal review page, only visible by assigned reviewer
 @app.route('/review/<pro_id>', methods=['GET', 'POST'])
 @login_required
 def pro_review(pro_id):
 
+    valid = select_where('assigned_reviewer', 'proposals', 'id', pro_id)
+    valid_check = valid[0][0]
+    print(valid)
+    print(valid_check)
+
+    #serves proposal pdf file when user clicks the download button
     if request.method == 'POST':
         f = pro_id + '.pdf'
         path = os.path.join('static/proposals/')
         return send_file(path + f)
 
-
-
-    if current_user.account == 'reviewer':
+    #checks if user is allowed to view proposal
+    if current_user.account == 'reviewer' and valid_check == current_user.id:
         return render_template('pro_review.html', pro_id = pro_id)
     else:
         return redirect(url_for('dashboard'))
 
+#processing of review
 @app.route('/re_submit', methods=['POST'])
 def review_submit():
 
@@ -387,14 +403,16 @@ def review_submit():
         sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
         values = (id, sig, work, outcomes, budget, comments)
         insert(sql, values)
+
     return redirect(url_for('dashboard'))
 
-
+#logs user out
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
+#quickly view a table for debugging
 @app.route('/show/<table>')
 def show(table):
     print(table)
@@ -418,6 +436,7 @@ def format_datetime(date):
     final = fday+" "+time
     return final
 
+#checks uploaded file (for admin grant upload)
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
