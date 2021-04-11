@@ -121,14 +121,13 @@ def dashboard():
 
     elif usertype == 'researcher':
         assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
-        pending = select_where ('*', 'proposals', 'approved', 'NULL')
+        pending = join_where_null('*', 'proposals', 'reviewer', 'submitted_by','email','proposals.approved')
 
         return render_template('gsdash.html', assign=assign, pending=pending)
 
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
-        pending = select_where ('*', 'proposals', 'approved', 'NULL')
-        print(assign)
+        pending = join_where_null('*', 'proposals', 'reports', 'id', 'proposal_id', 'proposals.approved')
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 
@@ -231,7 +230,7 @@ def pro_submit():
         db = get_db()
         c = db.cursor()
         c.execute('SELECT last_insert_rowid();')
-        l = c.fetchall();
+        l = c.fetchall()
         proposal_id = l[0][0]
 
         #updating budget items
@@ -280,14 +279,15 @@ def assign():
         seperate = email.split(" ")
         email = seperate[0]
         pid = seperate[1]
+        now = datetime.now()
+        assigned = now.strftime("%Y-%m-%d %H:%M:%S")
 
         #make sure reviewer exists
         exists = check_login(email)
         if exists:
 
-            sql = "UPDATE proposals SET assigned_reviewer='"+email+"' WHERE id='"+pid+"';"
-            print(email)
-            print(pid)
+            sql = 'UPDATE proposals SET assigned_reviewer=\''+email+'\', date_assigned=\''+assigned+'\', WHERE id=\''+pid+'\';'
+            values = (email, assigned, pid)
             sql_script(sql)
 
             rsql = 'Insert into reports(proposal_id, reviewer, assigned_by) values(?,?,?)'
@@ -393,6 +393,8 @@ def review_submit():
         outcomes = request.form['outcomes']
         budget = request.form['budget']
         comments = request.form['comments']
+        now = datetime.now()
+        reviewed = now.strftime("%d %b %Y %H:%M:%S")
 
         sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
 

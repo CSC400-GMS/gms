@@ -117,6 +117,7 @@ p {
   color: rgb(220, 220, 220);
   padding: 5px 10px;
   margin-top: 35px;
+  font-weight: 900;
 }
 
 #btn:hover {
@@ -137,16 +138,6 @@ p {
   float: right;
   align-items: center;
 }
-/*
-.grant-panel{
-  position: relative;
-  margin-left: 200px;
-  background-color: rgba(0, 0, 0, 0.5);
-  right: 50px;
-  min-width: 75%;
-}
-
-*/
 
 .item {
   margin-left: 300px;
@@ -162,29 +153,6 @@ p {
   background-color: rgba(255, 72, 0, .5);
   color: antiquewhite;
 }
-
-/*
-.grant-container {
-  background-color: rgba(0, 0, 0, 0.5);
-  min-height: 100%;
-  min-width: 100%;
-}
-
-.grant-container table {
-  position: relative;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: rgb(253, 228, 218);
-  max-width: 75%;
-  top: 65;
-  left: 20%;
-  border: 0px;
-}
-
-.grant-container .gr:hover {
-  color: rgb(255, 72, 0);
-}
-
-*/
 
 .grants-list {
   display: flex;
@@ -292,6 +260,8 @@ input[type='checkbox']:checked + label:before {
   color: antiquewhite;
 }
 
+.reviewer-dash,
+.admin-dash,
 .pro-review,
 .grants,
 .account {
@@ -303,6 +273,9 @@ input[type='checkbox']:checked + label:before {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+
+.reviewer-container,
+.admin-container,
 .pro-container,
 .grant-table-container,
 .account-container {
@@ -313,6 +286,7 @@ input[type='checkbox']:checked + label:before {
   height: auto;
   width: 85%;
   float: right;
+  padding-top: 25px;
 }
 
 .grant-table-item,
@@ -320,26 +294,38 @@ input[type='checkbox']:checked + label:before {
   position: relative;
   padding: 5px 15px;
   background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 5px 5px 0px 0px;
+  border-radius: 5px;
   width: 700px;
   height: 500px;
 }
 
 .pro-card {
   position: relative;
-  padding: 5px 15px;
+  padding: 15px;
   background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 5px 5px 0px 0px;
+  border-radius: 5px;
   width: 700px;
   height: 100%;
 }
 
+.pro-card label {
+  color: antiquewhite;
+  padding-top: 20px;
+  font-weight: 700;
+}
+
+.pro-card select, option {
+  font-weight: 700;
+}
+
+#reviewer-table,
+.form-group label,
 #grants-table,
 .card-title {
   color: antiquewhite;
 }
 
-
+#reviewer-table,
 #grants-table {
   table-layout: fixed;
 }
@@ -347,18 +333,84 @@ input[type='checkbox']:checked + label:before {
 #grants-table th:nth-child(1) {
   width: 10%;
 }
+#reviewer-table td:nth-child(2),
 #grants-table td:nth-child(1){
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+#reviewer-table th:nth-child(2),
 #grants-table th:nth-child(2) {
   width: 30%;
 }
 #grants-table td:nth-child(2) span {
   display: block;
 }
+
+#reviewer-table tbody tr:hover,
 #grants-table tr:hover {
+  font-weight: 700;
   color: rgb(255, 72, 0);
+}
+
+.admin-item li{
+  background-color:transparent;
+  border-color: transparent;
+}
+
+.admin-item a {
+  color: antiquewhite;
+  font-size: large;
+  font-weight: 700;
+}
+
+.pro-review .pro-download,
+.modal-body button,
+.admin-item button {
+  background-color: rgb(255, 72, 0);
+  color: antiquewhite;
+  font-weight: 900;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.admin-item button:hover,
+.admin-item button:focus,
+.admin-item button:active {
+  background-color: rgba(255, 72, 0, 0.75);
+}
+
+.admin-item .modal-content h4,
+.admin-item .modal-content p {
+  color:rgb(45, 45, 45);
+  font-weight: 700;
+  word-wrap: break-word;
+}
+
+.reviewer-expand {
+  width: 800px;
+  min-width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: antiquewhite;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 20px;
+  box-shadow: 0 -7px 10px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 5px 5px 0px 0px;
+  transition: 0.4s;
+}
+.reviewer-panel {
+  width: 800px;
+  min-width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 50px;
+  border-radius: 0px 0px 5px 5px;
+  padding: 20px;
+}
+.pro-review button,
+.reviewer-panel p{
+  color: antiquewhite;
 }
 
