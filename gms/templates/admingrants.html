@@ -15,6 +15,9 @@
       <section class="grants">
       <div class="grant-table-container">
         <div class="grant-table-item">
+        {% if current_user.account == "admin" %}
+        <a type="submit" id="btn" href="{{ url_for('grant_upload') }}" style="float: right;">Add Grant</a>
+        {% endif %}
         <table class=" table table-hover table-borderless" id="grants-table">
           <thead>
             <tr>
@@ -27,7 +30,7 @@
           </thead>
 	{% for grant in grants%}
           <tbody>
-           <tr onclick="window.location.href='{{ url_for('showGrant', grantid=grant[0])}}'">
+           <tr onclick="window.location.href='{{ url_for('showGrant', grantid=grant[0]) }}'">
                <td>{{ grant[0] }}</td>
                <td>{{ grant[1] }}</td>
                <td>{{ grant[2] }}</td>

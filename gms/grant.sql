@@ -44,6 +44,7 @@ CREATE TABLE if not exists proposals(
   funding_re INTEGER NOT NULL,
   grant_id INTEGER NOT NULL,
   date_submitted datetime NOT NULL,
+  date_assigned datetime,
   approved binary,
   approved_by INTEGER,
   submitted_by VARCHAR(255) NOT NULL,
@@ -59,6 +60,7 @@ CREATE TABLE if not exists reports(
   proposal_id int NOT NULL,
   reviewer varchar(255) NOT NULL,
   assigned_by int,
+  rev_reviewed datetime,
   FOREIGN KEY(reviewer) references reviewer(email),
   FOREIGN KEY(proposal_id) references proposals(id)
 );
