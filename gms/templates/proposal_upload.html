@@ -129,7 +129,7 @@
 	</div>
 
 	<div class="form-group">
-	  <label>Budget</label>
+	  <label>Budget</label><br>
 	  <input type='text' name='budget' placeholder='Item Name'>
 	  <input type='text' name='budget' placeholder='Item Cost'>
 	  <input type='text' name='budget' placeholder='Justification'>
@@ -137,7 +137,7 @@
 	</div>
 
 	<div class="form-group">
-	  <label>Add Keywords</label>
+		<label>Add Keywords</label><br>
 	  <select id='taglist' size='3' style='height: 200px; overflow: auto' multiple>
 	    {% for tag in taglist %}
 	    <option value="{{ tag[0] }}" name="left" id="{{ tag[1] }}" style='text-shadow: 0px 0px 0px black;'>{{ tag[1] }}</option>
@@ -190,7 +190,7 @@ $('#summary, #workplan, #significance, #outcome').keydown(function() {
 $('#tagbtn').click(function () {
   $('[name=left]').each(function () {
     if($(this).is(':selected')){
-      var option = "<option value='" + $(this).attr('value') + "' name='right' id='" + $(this).attr('id') + "'>" + $(this).attr('id') + "</option>";
+      var option = "<option value='" + $(this).attr('value') + "' name='right' id='" + $(this).attr('id') + "' style='text-shadow: 0px 0px 0px black'>" + $(this).attr('id') + "</option>";
       $(option).appendTo('#right_taglist');
       $(this).remove();
     }
@@ -201,7 +201,7 @@ $('#tagbtn').click(function () {
 $('#removebtn').click(function () {
   $('[name=right]').each(function () {
     if($(this).is(':selected')){
-      var option = "<option value='" + $(this).attr('value') + "' name='left' id='" + $(this).attr('id') + "'>" + $(this).attr('id') + "</option>";
+      var option = "<option value='" + $(this).attr('value') + "' name='left' id='" + $(this).attr('id') + "' style='text-shadow: 0px 0px 0px black'>" + $(this).attr('id') + "</option>";
       $(option).appendTo('#taglist');
       $(this).remove();
     }
