@@ -24,8 +24,8 @@
                 {% if assign %}
                 {% for g in grant %}
                 <ul class="list-group">
-                  <li class="list-group-item d-flex justify-content-between align-items-center"><a href="{{ url_for('assign', pid=g[0]) }}">{{ g[15] }} - {{ g[1] }} </a>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                  <li class="list-group-item d-flex justify-content-between align-items-center"><a>{{ g[15] }} - {{ g[1] }} </a>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal{{g[0]}}">
                     Assign
                     </button>
                 </li>
@@ -33,7 +33,7 @@
                   
                 <div>
                   <!-- The Modal -->
-                  <div style="font-weight: bold;" class="modal" id="myModal">
+                  <div style="font-weight: bold;" class="modal" id="myModal{{g[0]}}">
                     <div class="modal-dialog">
                       <div class="modal-content">
 
@@ -47,14 +47,14 @@
                         <div class="modal-body">
                           <p>Title: {{ g[1] }}</p>
                           <p>Summary: {{ g[2] }} </p>
-			  <form action="{{ url_for('assign') }}" method="post">
+			                    <form action="{{ url_for('assign') }}" method="post">
                             <p>Reviewers in the {{g[22]}} Department:</p>
-                            <select style="font-weight: bold;" name="remail" class="custom-select" id="inputGroupSelect01">
+                            <select style="font-weight: bold;" name="remail" class="custom-select" id="inputGroupSelect0{{g[0]}}">
                               <option selected>Choose...</option>
                               {% for r in reviewer %}
                                 {% if r[3] == g[22] %}
 
-                              <option style="font-weight: bold;" value="{{r[0]}} {{g[0]}}">{{r[1]}} {{r[2]}}</option>
+                               <option style="font-weight: bold;" value="{{r[0]}} {{g[0]}}">{{r[1]}} {{r[2]}}</option>
 
                                 {% endif %}
                               {% endfor %}
@@ -72,7 +72,7 @@
                     </div>
                   </div>
                 </div>
-		{% endfor %}
+		            {% endfor %}
                 {% else %}
                   <p> No grants to assign at this time</p>
                 {% endif %}
@@ -83,30 +83,30 @@
             <div class="panel">
                 {% if pending %}
                 {% for p in pending %}
-
                 <div>
-		  {% if p[10] is none %}
-		  
+		              {% if p[10] is none %}
+
                       <ul class="list-group">
                         <li class="list-group-item d-flex justify-content-between align-items-center"><a href="#">{{ p[1] }} </a> 
-			  {% if p[13] and not p[18] %}
+			                    {% if p[13] and not p[18] %}
                           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#appModal" disabled>
                           Not yet reviewed
                           </button>
-			  {% else %}
-			  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#appModal">
-			  Decide
-			  </button>
-			  {% endif %}
+                          {% else %}
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#appModal{{p[0]}}">
+                          Decide
+                          </button>
+                          {% endif %}
                         </li>
                       </ul>
-		  {% endif %}
-		</div>
+		              {% endif %}
+		            </div>
 
 		  {% if re_info %}
-		  {% for re in re_info %}
+      {% for re in re_info %}
+      {% if  p[14] == re[0] %}
                   <!-- The Modal -->
-                  <div style="font-weight: bold;" class="modal" id="appModal">
+                  <div style="font-weight: bold;" class="modal" id="appModal{{p[0]}}">
                     <div class="modal-dialog">
                       <div class="modal-content">
 
@@ -122,19 +122,12 @@
                           <br>
                           <p>Summary: {{ p[2] }}</p>
                           <br>
-			  <form  action="{{ url_for('decide', pro_id=re[0]) }}" method="post">
-
-                            {% if  p[15] == re[0] %}
+			                    <form  action="{{ url_for('decide', pro_id=p[0]) }}" method="post">
                             <p>Signifigance = {{ re[1]}}</p>
                             <p>Work Plan = {{ re[2]}}</p>
                             <p>Outcomes = {{ re[3]}}</p>
                             <p>Budget Proposal = {{ re[4]}}</p>
                             <p>comments = {{ re[5]}}</p>
-
-                            {% else %}
-                            <h3>Error, IDs don't match</h3>
-
-                            {% endif %}
                             <button style="font-weight: bold;" name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="accept">Accept</button>
                             <button style="font-weight: bold;" name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="decline">Decline</button>
                           </form>
@@ -148,8 +141,9 @@
                       </div>
                     </div>
                   </div>
+              {%endif%}
               {% endfor %}
-	      {% endif %}
+	            {% endif %}
               {% endfor %}
               {% else %}
                 <p>No proposals to review at this time</p>
