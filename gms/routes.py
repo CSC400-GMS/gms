@@ -116,7 +116,7 @@ def dashboard():
         reviewer = select_all('reviewer')
         approval = join('*', 'proposals', 'reports', 'id', 'proposal_id')
         re_info = select_all('report_info')
-
+        print(grant) 
         return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info)
 
     elif usertype == 'researcher':
@@ -127,7 +127,7 @@ def dashboard():
 
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
-        pending = join_where_null('*', 'proposals', 'reports', 'id', 'proposal_id', 'proposals.approved')
+        pending = join('*', 'proposals', 'reports', 'id', 'proposal_id')
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 
@@ -286,7 +286,7 @@ def assign():
         exists = check_login(email)
         if exists:
 
-            sql = 'UPDATE proposals SET assigned_reviewer=\''+email+'\', date_assigned=\''+assigned+'\', WHERE id=\''+pid+'\';'
+            sql = 'UPDATE proposals SET assigned_reviewer=\''+email+'\', date_assigned=\''+assigned+'\' WHERE id=\''+pid+'\';'
             values = (email, assigned, pid)
             sql_script(sql)
 
@@ -301,18 +301,18 @@ def assign():
     return redirect(url_for('dashboard'))
 
 #only for admin, processes a grant decision
-@app.route('/decision', methods=['POST'])
-def decide():
+@app.route('/decision/<pro_id>', methods=['POST'])
+def decide(pro_id):
 
     if request.method == 'POST':
         if request.form['decide'] == 'accept':
-            sql = 'UPDATE proposals SET approved=1;'
+            sql = 'UPDATE proposals SET approved=1 WHERE id=\''+pro_id+'\';'
             sql_script(sql)
             #get the admin id number to add to proposal table
             sql = "UPDATE proposals SET approved_by="
 
         elif request.form['decide'] == 'decline':
-            sql = 'UPDATE proposals SET approved=0;'
+            sql = 'UPDATE proposals SET approved=0 WHERE id=\''+pro_id+'\';'
             sql_script(sql)
             #get the admin id number to add to proposal table
             sql = "UPDATE proposals SET approved_by="
@@ -394,13 +394,12 @@ def review_submit():
         budget = request.form['budget']
         comments = request.form['comments']
         now = datetime.now()
-        reviewed = now.strftime("%d %b %Y %H:%M:%S")
+        reviewed = now.strftime("%d-%b-%Y %H:%M:%S")
 
         sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
-
         id = sql_script(sql)
-        print(id)
-
+        usql = 'UPDATE reports SET rev_reviewed=\''+reviewed+'\' WHERE proposal_id=\''+pro_id+'\';'
+        sql_script(usql)
 
         sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
         values = (id, sig, work, outcomes, budget, comments)
