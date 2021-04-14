@@ -26,9 +26,10 @@
               <th scope="col">Sponsor</th>
               <th scope="col">Requirements</th>
               <th scope="col">Deadline</th>
+              <th scope="col">Report</th>
             </tr>
           </thead>
-	{% for grant in grants%}
+	        {% for grant in grants%}
           <tbody>
            <tr onclick="window.location.href='{{ url_for('showGrant', grantid=grant[0]) }}'">
                <td>{{ grant[0] }}</td>
@@ -36,8 +37,9 @@
                <td>{{ grant[2] }}</td>
                <td>{{ grant[4] }}</td>
                <td>{{ grant[6] }}</td>
+               <td><a type="submit" id="btn" href="{{ url_for('grant_report', grant_id=grant[0]) }}">Generate Report</a></td>
            </tr>
-	{% endfor %}
+	        {% endfor %}
          </tbody>
        </table>
        </div>
