@@ -70,7 +70,7 @@ def index():
 def register():
     if request.method == 'POST':
         #system has only one administator, so we just set the id here
-        id_num = 0
+        id_num = request.form['num']
         fname = request.form['fname']
         lname = request.form['lname']
         email = request.form['email']
