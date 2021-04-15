@@ -45,6 +45,7 @@ def index():
     if request.method == "POST":
         if check_login(request.form['email']):
             user_info = select_where('*', 'account', 'email', request.form['email'])
+            print(user_info)
             valid_password = check_password_hash(user_info[0][1], request.form['password'])
             if valid_password and request.form['userclass'] == user_info[0][2]:
                 acc_info = select_where('*', request.form['userclass'], 'email', request.form['email'])
@@ -256,7 +257,7 @@ def pro_submit():
 
             tagString += tag+", "
 
-        generating and saving pdf
+        # generating and saving pdf
         conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>" + \
@@ -337,15 +338,27 @@ def account():
             values = (email, fname, lname, ini_email)
             insert(sql, values)
 
+            asql = 'UPDATE account SET email=? where email=?'
+            avalues = (email, ini_email)
+            insert(asql, avalues)
+
         elif usertype == 'reviewer':
             sql = 'UPDATE reviewer SET email=?, name=?, lastname=? WHERE email=?'
             values = (email, fname, lname, ini_email)
             insert(sql, values)
 
+            asql = 'UPDATE account SET email=? where email=?'
+            avalues = (email, ini_email)
+            insert(asql, avalues)
+
         elif usertype == 'researcher':
             sql = 'UPDATE researcher SET email=?, name=?, lastname=? WHERE email=?'
             values = (email, fname, lname, ini_email)
             insert(sql, values)
+
+            asql = 'UPDATE account SET email=? where email=?'
+            avalues = (email, ini_email)
+            insert(asql, avalues)
 
         flash('Your account has been updated.', 'success')
         return redirect(url_for('account'))
