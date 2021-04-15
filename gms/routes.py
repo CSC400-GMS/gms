@@ -117,7 +117,7 @@ def dashboard():
         reviewer = select_all('reviewer')
         approval = join('*', 'proposals', 'reports', 'id', 'proposal_id')
         re_info = select_all('report_info')
-        print(grant) 
+        print(grant)
         return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info)
 
     elif usertype == 'researcher':
@@ -129,6 +129,7 @@ def dashboard():
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
         pending = join('*', 'proposals', 'reports', 'id', 'proposal_id')
+        print(pending)
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 
@@ -255,7 +256,7 @@ def pro_submit():
 
             tagString += tag+", "
 
-        #generating and saving pdf
+        generating and saving pdf
         conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>" + \
@@ -396,6 +397,7 @@ def review_submit():
         comments = request.form['comments']
         now = datetime.now()
         reviewed = now.strftime("%d-%b-%Y %H:%M:%S")
+        complete = 1
 
         sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
         id = sql_script(sql)
@@ -405,6 +407,10 @@ def review_submit():
         sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
         values = (id, sig, work, outcomes, budget, comments)
         insert(sql, values)
+
+        sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
+        print(sql)
+        sql_script(sql)
 
     return redirect(url_for('dashboard'))
 
@@ -430,7 +436,7 @@ def grant_report(grant_id):
             denied.append(grant)
         else:
             pending.append(grant)
-        
+
 
     with open(grant_id+".csv", 'w', newline='') as file:
         writer = csv.writer(file)
@@ -464,7 +470,7 @@ def grant_report(grant_id):
         else:
             for p in pending:
                 writer.writerow([p[12], p[1], p[6], p[13]])
-    
+
     #cant figure out to how download this, will fix later
     redirect(url_for('dashboard'))
 
