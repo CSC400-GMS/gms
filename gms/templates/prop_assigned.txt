@@ -1,0 +1,4 @@
+To {{ email }},
+{{ admin }} has assigned you to review proposal #{{ pid }}
+
+Please review promptly.

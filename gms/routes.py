@@ -1,4 +1,4 @@
-from gms import app
+from gms import app, mail
 import os
 import pdfkit
 from datetime import datetime
@@ -7,6 +7,8 @@ from flask import render_template, request, redirect, url_for, flash, send_from_
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+from threading import Thread
+from flask_mail import Message
 
 #allowed extensions for grant file upload
 ALLOWED_EXTENSIONS = set(['pdf', 'doc', 'docx'])
@@ -268,6 +270,12 @@ def pro_submit():
                 "gms/static/proposals/"+str(proposal_id)+".pdf", configuration=conf)
 
         flash('WEll DONE')
+    
+    #sending email notification 
+    sql = 'SELECT email FROM admins;'
+    admins = sql_script(sql)
+    send_mail("New proposal has posted!", admins, render_template("prop_notif.txt", name=name, email=email, id=id))
+
     return redirect(url_for('proposal_upload', test=id))
 
 #page for assigning reviewers, only visible by admin
@@ -294,6 +302,9 @@ def assign():
             info = (pid, email, current_user.id)
             insert(rsql, info)
 
+            #send an email notification to reviewer
+            send_mail('You have a new proposal assignment!', render_template("prop_assigned.txt", email=email, admin=current_user.id, pid=pid))
+            
             flash('Reviewer Assigned')
 
         else:
@@ -344,6 +355,9 @@ def account():
             sql = 'UPDATE researcher SET email=?, name=?, lastname=? WHERE email=?'
             values = (email, fname, lname, ini_email)
             insert(sql, values)
+
+        #Send email notification to user about account changes
+        send_mail('Your Account Information Was Changed', current_user.id, render_template('acct_change.txt', fname=fname, lname=lname))
 
         flash('Your account has been updated.', 'success')
         return redirect(url_for('account'))
@@ -421,6 +435,19 @@ def show(table):
     all = select_all(table)
     print(all)
     return 'hello'
+
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+#Email Notification
+#@app.route('/send_mail')
+def send_mail(subject, recipients, text_body):
+    msg = Message(subject, recipients=[recipients])
+    msg.body = text_body
+    Thread(target=send_async_email, args=(app, msg)).start()
+
+
 
 #this takes the deadline submition from adding a new grant
 #and reformats it into a form appropiate for sql injection

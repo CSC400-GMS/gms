@@ -1,0 +1,8 @@
+Hello Admin,
+
+A new proposal has posted for Grant {{ id }} by {{ name }} <{{ email }}>.
+Please log in to GrantMS.org to review.
+
+
+
+This notification has been automatically generated.

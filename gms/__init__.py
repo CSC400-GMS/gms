@@ -2,6 +2,7 @@ from flask import Flask, g
 import sqlite3
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from flask_mail import Mail
 
 
 GRANTS_FOLDER = 'gms/static/grants'
@@ -14,7 +15,7 @@ app.config['GRANT'] = GRANTS_FOLDER
 database = "app.db"
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-
+mail = Mail(app)
 
 def connection(db_file):
         con = sqlite3.connect(db_file)

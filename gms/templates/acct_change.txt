@@ -1,0 +1,5 @@
+To {{ fname }} {{ lname }},
+
+	Your account information has been updated.
+	Please login to your account to review.
+
