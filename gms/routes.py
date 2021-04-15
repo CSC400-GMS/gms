@@ -1,6 +1,7 @@
 from gms import app, mail
 import os
 import pdfkit
+import csv
 from datetime import datetime
 from database import *
 from flask import render_template, request, redirect, url_for, flash, send_from_directory, send_file
@@ -118,7 +119,7 @@ def dashboard():
         reviewer = select_all('reviewer')
         approval = join('*', 'proposals', 'reports', 'id', 'proposal_id')
         re_info = select_all('report_info')
-
+        print(grant) 
         return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info)
 
     elif usertype == 'researcher':
@@ -129,7 +130,7 @@ def dashboard():
 
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
-        pending = join_where_null('*', 'proposals', 'reports', 'id', 'proposal_id', 'proposals.approved')
+        pending = join('*', 'proposals', 'reports', 'id', 'proposal_id')
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 
@@ -294,7 +295,7 @@ def assign():
         exists = check_login(email)
         if exists:
 
-            sql = 'UPDATE proposals SET assigned_reviewer=\''+email+'\', date_assigned=\''+assigned+'\', WHERE id=\''+pid+'\';'
+            sql = 'UPDATE proposals SET assigned_reviewer=\''+email+'\', date_assigned=\''+assigned+'\' WHERE id=\''+pid+'\';'
             values = (email, assigned, pid)
             sql_script(sql)
 
@@ -312,18 +313,18 @@ def assign():
     return redirect(url_for('dashboard'))
 
 #only for admin, processes a grant decision
-@app.route('/decision', methods=['POST'])
-def decide():
+@app.route('/decision/<pro_id>', methods=['POST'])
+def decide(pro_id):
 
     if request.method == 'POST':
         if request.form['decide'] == 'accept':
-            sql = 'UPDATE proposals SET approved=1;'
+            sql = 'UPDATE proposals SET approved=1 WHERE id=\''+pro_id+'\';'
             sql_script(sql)
             #get the admin id number to add to proposal table
             sql = "UPDATE proposals SET approved_by="
 
         elif request.form['decide'] == 'decline':
-            sql = 'UPDATE proposals SET approved=0;'
+            sql = 'UPDATE proposals SET approved=0 WHERE id=\''+pro_id+'\';'
             sql_script(sql)
             #get the admin id number to add to proposal table
             sql = "UPDATE proposals SET approved_by="
@@ -408,19 +409,78 @@ def review_submit():
         budget = request.form['budget']
         comments = request.form['comments']
         now = datetime.now()
-        reviewed = now.strftime("%d %b %Y %H:%M:%S")
+        reviewed = now.strftime("%d-%b-%Y %H:%M:%S")
 
         sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
-
         id = sql_script(sql)
-        print(id)
-
+        usql = 'UPDATE reports SET rev_reviewed=\''+reviewed+'\' WHERE proposal_id=\''+pro_id+'\';'
+        sql_script(usql)
 
         sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
         values = (id, sig, work, outcomes, budget, comments)
         insert(sql, values)
 
     return redirect(url_for('dashboard'))
+
+#generates report for a grant
+@app.route('/grant_report/<grant_id>', methods=['GET'])
+def grant_report(grant_id):
+
+    #get information about the grant from db
+    grantInfo = join('*', 'proposals', 'grants', 'grant_id', 'id')
+
+    accepted = []
+    denied = []
+    pending = []
+
+    award = 0
+
+    for grant in grantInfo:
+        #determine status
+        if grant[10] == 1:
+            accepted.append(grant)
+            award += grant[6]
+        elif grant[10] == 0:
+            denied.append(grant)
+        else:
+            pending.append(grant)
+        
+
+    with open(grant_id+".csv", 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Grant Report - ' + grantInfo[0][15]])
+        writer.writerow([''])
+        writer.writerow(['Accepted - ' + str(len(accepted)), 'Denied - ' + str(len(denied)), 'Pending - ' + str(len(pending))])
+        writer.writerow(['Awarded Funding - ' + str(award)])
+        writer.writerow([''])
+        writer.writerow(['Accepted Proposals'])
+        writer.writerow([''])
+        writer.writerow(['Name', 'Proposal Title', 'Awarded Funding', 'Reviewer'])
+        if len(accepted) == 0:
+            writer.writerow(['None'])
+        for a in accepted:
+            writer.writerow([a[12], a[1], a[6], a[13]])
+        writer.writerow([''])
+        writer.writerow(['Denied Proposals'])
+        writer.writerow([''])
+        writer.writerow(['Name', 'Proposal Title', 'Awarded Funding', 'Reviewer'])
+        if len(denied) == 0:
+            writer.writerow(['None'])
+        else:
+            for d in denied:
+                writer.writerow([d[12], d[1], d[6], d[13]])
+        writer.writerow([''])
+        writer.writerow(['Pending Proposals'])
+        writer.writerow([''])
+        writer.writerow(['Name', 'Proposal Title', 'Awarded Funding', 'Reviewer'])
+        if len(pending) == 0:
+            writer.writerow(['None'])
+        else:
+            for p in pending:
+                writer.writerow([p[12], p[1], p[6], p[13]])
+    
+    #cant figure out to how download this, will fix later
+    redirect(url_for('dashboard'))
 
 #logs user out
 @app.route('/logout')
