@@ -2,6 +2,7 @@ from gms import app, mail
 import os
 import pdfkit
 import csv
+import io
 from datetime import datetime
 from database import *
 from flask import render_template, request, redirect, url_for, flash, send_from_directory, send_file
@@ -287,7 +288,7 @@ def pro_submit():
         flash('WEll DONE')
     
     #sending email notification 
-    sql = 'SELECT email FROM admins;'
+    sql = 'SELECT email FROM admin;'
     admins = sql_script(sql)
     send_mail("New proposal has posted!", admins, render_template("prop_notif.txt", name=name, email=email, id=id))
 
@@ -485,9 +486,9 @@ def grant_report(grant_id):
             denied.append(grant)
         else:
             pending.append(grant)
-
-
-    with open(grant_id+".csv", 'w', newline='') as file:
+    
+    report = io.StringIO()
+    with open(report, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Grant Report - ' + grantInfo[0][15]])
         writer.writerow([''])
@@ -519,9 +520,12 @@ def grant_report(grant_id):
         else:
             for p in pending:
                 writer.writerow([p[12], p[1], p[6], p[13]])
-
+    r = bytes(report.getvalue(), 'utf-u')
+    buffer = BytesIO()
+    buffer.write(r)
+    buffer.seek(0)
     #cant figure out to how download this, will fix later
-    redirect(url_for('dashboard'))
+    return send_file(buffer, mimetype='application/octet-stream', as_attachment=True, attachement_filename='report.csv')
 
 #logs user out
 @app.route('/logout')
