@@ -35,17 +35,17 @@
               <p>You Are A...</p>
               <div class="form-check-inline">
                 <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="userclass" value="researcher" onclick="add_fields()">A Grantseeker
+                  <input type="radio" class="form-check-input" name="userclass" value="researcher" onclick="delete_fields('gs');add_fields('gs');">A Grantseeker
                 </label>
               </div>
               <div class="form-check-inline">
                 <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="userclass" value="admin" onclick="delete_fields()">An Admin
+                  <input type="radio" class="form-check-input" name="userclass" value="admin" onclick="delete_fields('admin');add_fields('admin');">An Admin
                 </label>
               </div>
               <div class="form-check-inline">
                 <label class="form-check-label">
-                  <input type="radio" class="form-check-input" name="userclass" value="reviewer" onclick="delete_fields()">A Reviewer
+                  <input type="radio" class="form-check-input" name="userclass" value="reviewer" onclick="delete_fields('re')">A Reviewer
                 </label>
               </div>
 	      <div class ='form-group' id='check'></div>
@@ -59,12 +59,13 @@
 	<script>
 	//adds new form fields for the grant seeker.
 	//to avoid error, one radio button must be checked by default
-	function add_fields() {
+	function add_fields(u) {
 
 		if ( $('#label').length > 0){
 			return false;
 		}
-		else {
+
+		if(u == 'gs') {
 		//check if fields exist
 		var $label = $("<div class='form-group' id='label'><p>Just a little more info...</p></div>");
 		var $dept = $("<div class='form-group' id='dept'><input type='dept' class='form-control' name='dept' placeholder='Department'></div>");
@@ -73,13 +74,32 @@
 		($dept).insertAfter('#label');
 		($time).insertAfter('#dept');
 		}
+    else if (u == 'admin') {
+      var $label = $("<div class='form-group' id='label'><p>Just a little more info...</p></div>");
+      var $num = $("<div class='form-group' id='num'><input type='num' class='form-control' name='num' placeholder='ID Number'></div>");
+      ($label).insertAfter('#check');
+      ($num).insertAfter('#label');
+    }
 
 	}
+
 	//removes fields when you click another user type
-	function delete_fields() {
-		$('#label').remove();
-		$('#dept').remove();
-		$('[name="time"]').remove();
+	function delete_fields(u) {
+    if(u == 'gs'){
+      $('#num').remove();
+    }
+    else if (u == 'admin') {
+      $('#label').remove();
+      $('#dept').remove();
+      $('[name="time"]').remove();
+    }
+    else {
+      $('#label').remove();
+      $('#dept').remove();
+      $('#num').remove();
+      $('[name="time"]').remove();
+    }
+
 	}
 
 	</script>

@@ -289,7 +289,6 @@ input[type='checkbox']:checked + label:before {
   padding-top: 25px;
 }
 
-.grant-table-item,
 .account-card {
   position: relative;
   padding: 5px 15px;
@@ -297,6 +296,18 @@ input[type='checkbox']:checked + label:before {
   border-radius: 5px;
   width: 700px;
   height: 500px;
+}
+
+.grant-table-item {
+  position: relative;
+  padding: 5px 15px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  min-width: 700px;
+  width: fit-content;
+  min-height: 500px;
+  height: fit-content;
+  margin: 5px;
 }
 
 .pro-card {

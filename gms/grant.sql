@@ -61,6 +61,7 @@ CREATE TABLE if not exists reports(
   reviewer varchar(255) NOT NULL,
   assigned_by int,
   rev_reviewed datetime,
+  completed binary,
   FOREIGN KEY(reviewer) references reviewer(email),
   FOREIGN KEY(proposal_id) references proposals(id)
 );

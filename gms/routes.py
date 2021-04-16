@@ -47,6 +47,7 @@ def index():
     if request.method == "POST":
         if check_login(request.form['email']):
             user_info = select_where('*', 'account', 'email', request.form['email'])
+            print(user_info)
             valid_password = check_password_hash(user_info[0][1], request.form['password'])
             if valid_password and request.form['userclass'] == user_info[0][2]:
                 acc_info = select_where('*', request.form['userclass'], 'email', request.form['email'])
@@ -71,7 +72,7 @@ def index():
 def register():
     if request.method == 'POST':
         #system has only one administator, so we just set the id here
-        id_num = 0
+        #id_num = request.form['num']
         fname = request.form['fname']
         lname = request.form['lname']
         email = request.form['email']
@@ -84,6 +85,7 @@ def register():
         insert(sql,data)
 
         if account == 'admin':
+            id_num = request.form['num']
             admin_sql = "INSERT into admin values(?, ?, ?, ?, ?)"
             admin_data = (id_num, email, fname, lname, dept)
             insert(admin_sql, admin_data)
@@ -98,6 +100,9 @@ def register():
             gs_sql = "INSERT into researcher values(?, ?, ?, ?, ?)"
             gs_data = (email, fname, lname, dept, status)
             insert(gs_sql, gs_data)
+
+        #send email confirmation to the user that they've created their account
+        send_mail('Grant MS Registration', email, render_template('reg_email.txt', fname=fname, lname=lname, email=email, dept=dept, account=account))
 
         flash('You have successfully registered!')
 
@@ -119,7 +124,7 @@ def dashboard():
         reviewer = select_all('reviewer')
         approval = join('*', 'proposals', 'reports', 'id', 'proposal_id')
         re_info = select_all('report_info')
-        print(grant) 
+        print(grant)
         return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info)
 
     elif usertype == 'researcher':
@@ -131,6 +136,7 @@ def dashboard():
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
         pending = join('*', 'proposals', 'reports', 'id', 'proposal_id')
+        print(pending)
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
 
@@ -184,9 +190,15 @@ def grant_upload():
             values=(title, fund, sponsor, filename, post_date, deadline, "admin_id", dept)
             insert(sql, values)
             flash("The grant has been uploaded")
+
         else:
             flash('Upload the file requirements')
 
+        #Send email to grant seekers to notify them of the new grant that has been posted
+        researcher = select_where("email", "researcher", "dept", dept)
+        for x in researcher:
+            send_mail("New Grant Posted!", x, render_template("new_prop.txt", dept=dept, title=title, fund=fund, sponsor=sponsor, deadline=deadline))
+           
 
     return render_template('grant_upload.html')
 
@@ -257,7 +269,7 @@ def pro_submit():
 
             tagString += tag+", "
 
-        #generating and saving pdf
+        # generating and saving pdf
         conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
         pdfkit.from_string("<h1>"+title+"</h1>" + \
                 "<h1>Requested Funding: $"+amount+"</h1>" + \
@@ -329,6 +341,11 @@ def decide(pro_id):
             #get the admin id number to add to proposal table
             sql = "UPDATE proposals SET approved_by="
 
+        #send notification to the researcher that their proposal has completed review
+        res_email = select_where("submitted_by", proposals, "id", pro_id)
+        res = select_where("*", "researcher", "email", res_email)
+        prop = select_where("*", "proposals", "id", pro_id)
+        send_mail("Your proposal has been reviewed", res_email, render_template("prop_reviewed.txt", fname=res[1], lname=res[2], title=prop[1]))
     return redirect(url_for('dashboard'))
 
 #account settings page, visible for all accounts
@@ -347,31 +364,43 @@ def account():
             values = (email, fname, lname, ini_email)
             insert(sql, values)
 
+            asql = 'UPDATE account SET email=? where email=?'
+            avalues = (email, ini_email)
+            insert(asql, avalues)
+
         elif usertype == 'reviewer':
             sql = 'UPDATE reviewer SET email=?, name=?, lastname=? WHERE email=?'
             values = (email, fname, lname, ini_email)
             insert(sql, values)
+
+            asql = 'UPDATE account SET email=? where email=?'
+            avalues = (email, ini_email)
+            insert(asql, avalues)
 
         elif usertype == 'researcher':
             sql = 'UPDATE researcher SET email=?, name=?, lastname=? WHERE email=?'
             values = (email, fname, lname, ini_email)
             insert(sql, values)
 
+            asql = 'UPDATE account SET email=? where email=?'
+            avalues = (email, ini_email)
+            insert(asql, avalues)
+
         #Send email notification to user about account changes
         send_mail('Your Account Information Was Changed', current_user.id, render_template('acct_change.txt', fname=fname, lname=lname))
-
+        
         flash('Your account has been updated.', 'success')
         return redirect(url_for('account'))
 
     elif request.method == 'GET':
         if usertype == 'admin':
-            account = select_all('admin')
+            account = select_where('*', 'admin', 'email', ini_email)
 
         elif usertype == 'reviewer':
-            account = select_all('reviewer')
+            account = select_where('*', 'reviewer', 'email', ini_email)
 
         elif usertype == 'researcher':
-            account = select_all('researcher')
+            account = select_where('*', 'researcher', 'email', ini_email)
 
     return render_template('account_page.html', account=account)
 
@@ -410,6 +439,7 @@ def review_submit():
         comments = request.form['comments']
         now = datetime.now()
         reviewed = now.strftime("%d-%b-%Y %H:%M:%S")
+        complete = 1
 
         sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
         id = sql_script(sql)
@@ -419,6 +449,15 @@ def review_submit():
         sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
         values = (id, sig, work, outcomes, budget, comments)
         insert(sql, values)
+
+        sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
+        print(sql)
+        sql_script(sql)
+
+    #Send admin a notif that a reviewer completed their review
+    admin = select_all("admin")
+    rev_name = current_user.fname
+    send_mail("Reviewer completed their assignment", admin[1], render_template("rev_completed.txt", pro_id=pro_id, fname=admin[2], rev_name=rev_name))
 
     return redirect(url_for('dashboard'))
 
@@ -444,7 +483,7 @@ def grant_report(grant_id):
             denied.append(grant)
         else:
             pending.append(grant)
-        
+
 
     with open(grant_id+".csv", 'w', newline='') as file:
         writer = csv.writer(file)
@@ -478,7 +517,7 @@ def grant_report(grant_id):
         else:
             for p in pending:
                 writer.writerow([p[12], p[1], p[6], p[13]])
-    
+
     #cant figure out to how download this, will fix later
     redirect(url_for('dashboard'))
 
@@ -501,7 +540,6 @@ def send_async_email(app, msg):
         mail.send(msg)
 
 #Email Notification
-#@app.route('/send_mail')
 def send_mail(subject, recipients, text_body):
     msg = Message(subject, recipients=[recipients])
     msg.body = text_body

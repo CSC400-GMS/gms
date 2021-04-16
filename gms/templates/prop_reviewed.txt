@@ -1,0 +1,10 @@
+{{ fname }} {{ lname }},
+
+This email is to notify you that your proposal {{ title }} has completed
+the review process.
+
+Please login to your GrantMS account to view the final decision.
+
+Please contact the administrator for any further questions.
+
+Thank you

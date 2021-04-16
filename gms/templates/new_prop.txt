@@ -1,0 +1,10 @@
+To the {{ dept }} Department,
+
+A new grant has posted:
+
+    Title: {{ title }}
+    Sponsor: {{ sponsor }}
+    Fund: {{ fund }}
+    Deadline: {{ deadline }}
+
+Please login to your GrantMS account to submit a proposal!

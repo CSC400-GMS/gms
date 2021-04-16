@@ -1,0 +1,6 @@
+Hi {{ fname }},
+
+{{ rev_name }} has completed the review for proposal #{{ pro_id }}.
+
+Please login to GrantMS to submit the final decision.
+

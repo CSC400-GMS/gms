@@ -1,0 +1,8 @@
+Thank you for registering to Grant MS.
+
+Account Details:
+
+Name: {{ fname }} {{ lname }}
+Contact: {{ email }}
+Department: {{ dept }}
+Account Type: {{ account }}

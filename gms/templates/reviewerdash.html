@@ -29,7 +29,7 @@
 
           <div class="reviewer-item">
             <input type="checkbox" id="arrow1">
-            <label class="reviewer-expand" for="arrow1"> Recently Assigned Proposals </label> 
+            <label class="reviewer-expand" for="arrow1"> Recently Assigned Proposals </label>
             <div class = "reviewer-panel">
               {% if assign is not none %}
               <table class=" table table-hover table-borderless" id="reviewer-table">
@@ -43,14 +43,19 @@
                   </tr>
                 </thead>
                 <tbody>
-              {% for a in assign %}
-                  <tr onclick="window.location.href='{{ url_for('pro_review', pro_id=a[0]) }}';">
-                    <td> {{ a[1] }} </td>
-                    <td> {{ a[2] }} </td>
-                    <td> {{ a[11] }} </td>
-                    <td> {{ a[8] }}</td>
-                    <td> {{ a[13] }}</td>
+
+              {% for p in pending %}
+                {% if p[13] == current_user.id %}
+                  {% if p[19] != 1 %}
+                  <tr onclick="window.location.href='{{ url_for('pro_review', pro_id=p[0]) }}';">
+                    <td> {{ p[1] }} </td>
+                    <td> {{ p[2] }} </td>
+                    <td> {{ p[11] }} </td>
+                    <td> {{ p[8] }}</td>
+                    <td> {{ p[13] }}</td>
                   </tr>
+                  {% endif %}
+                {% endif %}
               {% endfor %}
                 </tbody>
               </table>
@@ -70,14 +75,16 @@
                     <th scope="col">Title</th>
                     <th scope="col">Researcher</th>
                   </tr>
-                </thead>              
+                </thead>
                 <tbody>
                   {% for p in pending %}
-		  {% if p[18] == current_user.id %}
+		  {% if p[13] == current_user.id %}
+        {% if p[19] == 1 %}
                   <tr>
                     <td> {{ p[1] }} </td>
                     <td> {{ p[12] }} </td>
                   </tr>
+        {% endif %}
 		  {% endif %}
                   {% endfor %}
                 </tbody>
