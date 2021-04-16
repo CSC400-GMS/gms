@@ -72,7 +72,10 @@ def index():
 def register():
     if request.method == 'POST':
         #system has only one administator, so we just set the id here
-        #id_num = request.form['num']
+        try:
+            id_num = request.form['num']
+        except:
+            print('no id num')
         fname = request.form['fname']
         lname = request.form['lname']
         email = request.form['email']
@@ -85,7 +88,6 @@ def register():
         insert(sql,data)
 
         if account == 'admin':
-            id_num = request.form['num']
             admin_sql = "INSERT into admin values(?, ?, ?, ?, ?)"
             admin_data = (id_num, email, fname, lname, dept)
             insert(admin_sql, admin_data)
