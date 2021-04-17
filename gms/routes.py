@@ -2,6 +2,7 @@ from gms import app, mail
 import os
 import pdfkit
 import csv
+import io
 from datetime import datetime
 from database import *
 from flask import render_template, request, redirect, url_for, flash, send_from_directory, send_file
@@ -287,7 +288,7 @@ def pro_submit():
         flash('WEll DONE')
     
     #sending email notification 
-    sql = 'SELECT email FROM admins;'
+    sql = 'SELECT email FROM admin;'
     admins = sql_script(sql)
     send_mail("New proposal has posted!", admins, render_template("prop_notif.txt", name=name, email=email, id=id))
 
