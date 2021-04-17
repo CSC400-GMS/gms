@@ -486,42 +486,45 @@ def grant_report(grant_id):
         else:
             pending.append(grant)
 
-
-    with open(grant_id+".csv", 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Grant Report - ' + grantInfo[0][15]])
-        writer.writerow([''])
-        writer.writerow(['Accepted - ' + str(len(accepted)), 'Denied - ' + str(len(denied)), 'Pending - ' + str(len(pending))])
-        writer.writerow(['Awarded Funding - ' + str(award)])
-        writer.writerow([''])
-        writer.writerow(['Accepted Proposals'])
-        writer.writerow([''])
-        writer.writerow(['Name', 'Proposal Title', 'Awarded Funding', 'Reviewer'])
-        if len(accepted) == 0:
-            writer.writerow(['None'])
+    pdfstring = '<h1>'+grantInfo[0][15]+'</h1><br>' + \
+        '<h3>Accepted - ' + str(len(accepted)) + ', Denied - ' + str(len(denied)) + ', Pending - ' + str(len(pending)) + '</h3><br>' + \
+        '<h3>Accepted Proposals</h3><br>'
+    
+    if len(accepted) == 0:
+        pdfstring += "<p>No proposals accepted at this time</p>"
+    else:
+        pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Awarded Funding</th><th>Reviewer</th></tr>"
         for a in accepted:
-            writer.writerow([a[12], a[1], a[6], a[13]])
-        writer.writerow([''])
-        writer.writerow(['Denied Proposals'])
-        writer.writerow([''])
-        writer.writerow(['Name', 'Proposal Title', 'Awarded Funding', 'Reviewer'])
-        if len(denied) == 0:
-            writer.writerow(['None'])
-        else:
-            for d in denied:
-                writer.writerow([d[12], d[1], d[6], d[13]])
-        writer.writerow([''])
-        writer.writerow(['Pending Proposals'])
-        writer.writerow([''])
-        writer.writerow(['Name', 'Proposal Title', 'Awarded Funding', 'Reviewer'])
-        if len(pending) == 0:
-            writer.writerow(['None'])
-        else:
-            for p in pending:
-                writer.writerow([p[12], p[1], p[6], p[13]])
+            pdfstring += "<tr><td>"+a[12]+"</td><td>"+a[1]+"</td><td>"+str(a[6])+'</td><td>'+a[13]+"</td></tr>"
+        pdfstring += "</table>"
+    
+    pdfstring += '<h3>Denied Proposals</h3>'
+
+    if len(denied) == 0:
+        pdfstring += "No proposals denied at this time"
+    else:
+        pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
+        for d in denied:
+            pdfstring += "<tr><td>"+d[12]+"</td><td>"+d[1]+"</td><td>"+str(d[6])+'</td><td>'+d[13]+"</td></tr>"
+        pdfstring += "</table>"
+    
+    pdfstring += '<h3>Pending Proposals</h3>'
+
+    if len(pending) == 0:
+        pdfstring += "No proposals pending at this time"
+    else:
+        pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
+        for p in pending:
+            pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>'+p[13]+"</td></tr>"
+        pdfstring += "</table>"    
 
     #cant figure out to how download this, will fix later
-    redirect(url_for('dashboard'))
+    conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+    pdfkit.from_string(pdfstring, "gms/static/grant_reports/"+str(grant_id)+".pdf", configuration=conf)
+
+    f = grant_id + '.pdf'
+    path = os.path.join('static/grant_reports/')
+    return send_file(path + f)
 
 #logs user out
 @app.route('/logout')
