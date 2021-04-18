@@ -1,4 +1,4 @@
-To the {{ dept }} Department,
+Researcher,
 
 A new grant has posted:
 

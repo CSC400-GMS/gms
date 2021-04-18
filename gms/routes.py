@@ -198,9 +198,12 @@ def grant_upload():
             flash('Upload the file requirements')
 
         #Send email to grant seekers to notify them of the new grant that has been posted
-        researcher = select_where("email", "researcher", "dept", dept)
-        for x in researcher:
-            send_mail("New Grant Posted!", x, render_template("new_prop.txt", dept=dept, title=title, fund=fund, sponsor=sponsor, deadline=deadline))
+        db = get_db()
+        c = db.cursor()
+        c.execute('SELECT * FROM researcher')
+        researchers = c.fetchall()
+        for email in researchers:
+            send_mail("New Grant Posted!", email[0], render_template("new_prop.txt", dept=dept, title=title, fund=fund, sponsor=sponsor, deadline=deadline))
            
 
     return render_template('grant_upload.html')
@@ -288,10 +291,13 @@ def pro_submit():
         flash('WEll DONE')
     
     #sending email notification 
-    sql = 'SELECT email FROM admin;'
-    admins = sql_script(sql)
-    send_mail("New proposal has posted!", admins, render_template("prop_notif.txt", name=name, email=email, id=id))
-
+    db = get_db()
+    c = db.cursor()
+    c.execute('SELECT * FROM admin')
+    admin = c.fetchall()
+    for a in admin:
+        send_mail("New proposal has posted!", a[1], render_template("prop_notif.txt", name=name, email=email, id=id))
+                
     return redirect(url_for('proposal_upload', test=id))
 
 #page for assigning reviewers, only visible by admin
@@ -319,7 +325,7 @@ def assign():
             insert(rsql, info)
 
             #send an email notification to reviewer
-            send_mail('You have a new proposal assignment!', render_template("prop_assigned.txt", email=email, admin=current_user.id, pid=pid))
+            send_mail('You have a new proposal assignment!', email, render_template("prop_assigned.txt", email=email, admin=current_user.id, pid=pid))
             
             flash('Reviewer Assigned')
 
@@ -345,10 +351,13 @@ def decide(pro_id):
             sql = "UPDATE proposals SET approved_by="
 
         #send notification to the researcher that their proposal has completed review
-        res_email = select_where("submitted_by", proposals, "id", pro_id)
-        res = select_where("*", "researcher", "email", res_email)
-        prop = select_where("*", "proposals", "id", pro_id)
-        send_mail("Your proposal has been reviewed", res_email, render_template("prop_reviewed.txt", fname=res[1], lname=res[2], title=prop[1]))
+        db = get_db()
+        c = db.cursor()
+        c.execute('SELECT * FROM proposals where id=?', [pro_id])
+        prop = c.fetchall()
+        for p in prop:
+            send_mail("Decision on your proposal is ready", p[12], render_template("prop_reviewed.txt",title=p[1]))
+
     return redirect(url_for('dashboard'))
 
 #account settings page, visible for all accounts
@@ -458,9 +467,13 @@ def review_submit():
         sql_script(sql)
 
     #Send admin a notif that a reviewer completed their review
-    admin = select_all("admin")
-    rev_name = current_user.fname
-    send_mail("Reviewer completed their assignment", admin[1], render_template("rev_completed.txt", pro_id=pro_id, fname=admin[2], rev_name=rev_name))
+    db = get_db()
+    c = db.cursor()
+    c.execute('SELECT * FROM admin')
+    admin = c.fetchall()
+    rev_name = current_user.first_name
+    for a in admin:
+        send_mail("Reviewer completed their assignment", a[1], render_template("rev_completed.txt", aname=a[2], pro_id=pro_id, rev_name=rev_name))
 
     return redirect(url_for('dashboard'))
 
