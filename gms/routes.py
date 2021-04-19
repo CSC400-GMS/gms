@@ -450,7 +450,7 @@ def review_submit():
         sql_script(usql)
 
         sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
-        values = (id, sig, work, outcomes, budget, comments)
+        values = (pro_id, sig, work, outcomes, budget, comments)
         insert(sql, values)
 
         sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
@@ -478,16 +478,19 @@ def grant_report(grant_id):
     award = 0
 
     for grant in grantInfo:
-        #determine status
-        if grant[10] == 1:
-            accepted.append(grant)
-            award += grant[6]
-        elif grant[10] == 0:
-            denied.append(grant)
-        else:
-            pending.append(grant)
+        if (grant[7] == int(grant_id)):
+            #determine status
+            if grant[10] == 1:
+                accepted.append(grant)
+                award += grant[6]
+            elif grant[10] == 0:
+                denied.append(grant)
+            else:
+                pending.append(grant)
 
-    pdfstring = '<h1>'+grantInfo[0][15]+'</h1><br>' + \
+    title = grantInfo[(int(grant_id) - 1)][15]
+
+    pdfstring = '<h1>'+title+'</h1><br>' + \
         '<h3>Accepted - ' + str(len(accepted)) + ', Denied - ' + str(len(denied)) + ', Pending - ' + str(len(pending)) + '</h3><br>' + \
         '<h3>Accepted Proposals</h3><br>'
     
@@ -516,7 +519,10 @@ def grant_report(grant_id):
     else:
         pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
         for p in pending:
-            pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>'+p[13]+"</td></tr>"
+            if p[13]:
+                pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>'+p[13]+"</td></tr>"
+            else:
+                pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>No Reviewer Assigned</td></tr>'
         pdfstring += "</table>"    
 
     #cant figure out to how download this, will fix later
