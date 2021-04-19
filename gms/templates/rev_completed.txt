@@ -1,4 +1,4 @@
-Hi {{ fname }},
+Hello {{ aname }},
 
 {{ rev_name }} has completed the review for proposal #{{ pro_id }}.
 

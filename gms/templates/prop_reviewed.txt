@@ -1,7 +1,6 @@
-{{ fname }} {{ lname }},
+Hello GrantMS Researcher,
 
-This email is to notify you that your proposal {{ title }} has completed
-the review process.
+This email is to notify you that your proposal {{ title }} has completed the review process.
 
 Please login to your GrantMS account to view the final decision.
 
