@@ -37,7 +37,8 @@
                <td>{{ grant[2] }}</td>
                <td>{{ grant[4] }}</td>
                <td>{{ grant[6] }}</td>
-               <td><a type="submit" id="btn" href="{{ url_for('grant_report', grant_id=grant[0]) }}">Generate Report</a></td>
+               <td><a type="submit" id="btn" href="{{ url_for('grant_report', r_type='Summary', grant_id=grant[0]) }}">Generate Summary Report</a></td>
+               <td><a type="submit" id="btn" href="{{ url_for('grant_report', r_type='Budget', grant_id=grant[0]) }}">Generate Budget Report</a></td>
            </tr>
 	        {% endfor %}
          </tbody>
