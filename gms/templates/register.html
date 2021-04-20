@@ -70,11 +70,9 @@
 		if(u == 'gs') {
 		//check if fields exist
 		var $label = $("<div class='form-group' id='label' style='font-weight: 700;'><p>Just a little more info...</p></div>");
-		var $dept = $("<div class='form-group' id='dept'><input type='dept' class='form-control' name='dept' placeholder='Department'></div>");
 		var $time = $("<div class='form-check-inline' name='time'><label class='form-check-label'><input type='radio' class='form-check-input' name='status' value='full'>Full Time</label></div><div class='form-check-inline'><label class='form-check-label' name='time'><input type='radio' class='form-check-input' name='status' value='part'>Part Time</label></div>");
 		($label).insertAfter('#check');
-		($dept).insertAfter('#label');
-		($time).insertAfter('#dept');
+		($time).insertAfter('#label');
 		}
     else if (u == 'admin') {
       var $label = $("<div class='form-group' id='label'><p style='font-weight: 700;'>Just a little more info...</p></div>");
