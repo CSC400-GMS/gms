@@ -13,14 +13,14 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </head>
-    <body>
+    <body class="dark-mode">
       {% include 'sidenav.html' %}
       <section class="admin-dash">
         <div class="admin-container">
           <div class="admin-item">
             <input type="checkbox" id="arrow1">
-            <label class="expand" for="arrow1"> Assign to Reviewers </label>
-            <div class="panel">
+            <label class="expand" id="target" for="arrow1"> Assign to Reviewers </label>
+            <div class="panel" id="admin-panel">
                 {% if assign %}
                 {% for g in grant %}
                 <ul class="list-group">
@@ -33,7 +33,7 @@
                   
                 <div>
                   <!-- The Modal -->
-                  <div style="font-weight: bold;" class="modal" id="myModal{{g[0]}}">
+                  <div class="modal" id="myModal{{g[0]}}">
                     <div class="modal-dialog">
                       <div class="modal-content">
 
@@ -46,15 +46,15 @@
                         <!-- Modal body -->
                         <div class="modal-body">
                           <p>Title: {{ g[1] }}</p>
-                          <p>Summary: {{ g[2] }} </p>
+                          <p>Summary: {{ g[2] | replace('<p>','') | replace('</p>','') }} </p>
 			                    <form action="{{ url_for('assign') }}" method="post">
                             <p>Reviewers in the {{g[22]}} Department:</p>
-                            <select style="font-weight: bold;" name="remail" class="custom-select" id="inputGroupSelect0{{g[0]}}">
+                            <select name="remail" class="custom-select" id="inputGroupSelect0{{g[0]}}">
                               <option selected>Choose...</option>
                               {% for r in reviewer %}
                                 {% if r[3] == g[22] %}
 
-                               <option style="font-weight: bold;" value="{{r[0]}} {{g[0]}}">{{r[1]}} {{r[2]}}</option>
+                               <option value="{{r[0]}} {{g[0]}}">{{r[1]}} {{r[2]}}</option>
 
                                 {% endif %}
                               {% endfor %}
@@ -79,8 +79,8 @@
           </div>
           <div class="admin-item">
             <input type="checkbox" id="arrow2">
-            <label class="expand" for="arrow2"> Pending Final Decision</label>
-            <div class="panel">
+            <label class="expand" id="target" for="arrow2"> Pending Final Decision</label>
+            <div class="panel" id="admin-panel">
                 {% if pending %}
                 {% for p in pending %}
                 <div>
@@ -106,13 +106,13 @@
       {% for re in re_info %}
       {% if  p[14] == re[0] %}
                   <!-- The Modal -->
-                  <div style="font-weight: bold;" class="modal" id="appModal{{p[0]}}">
+                  <div class="modal" id="appModal{{p[0]}}">
                     <div class="modal-dialog">
                       <div class="modal-content">
 
                         <!-- Modal Header -->
                         <div class="modal-header">
-                          <h4 style="font-weight: bold;" class="modal-title">Proposal {{ p[0] }} </h4>
+                          <h4 class="modal-title">Proposal {{ p[0] }} </h4>
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
 
@@ -120,7 +120,7 @@
                         <div class="modal-body">
                           <p>Title: {{ p[1] }}</p>
                           <br>
-                          <p>Summary: {{ p[2] }}</p>
+                          <p>Summary: {{ p[2] | replace('<p>','') | replace('</p>','') }} </p>
                           <br>
 			                    <form  action="{{ url_for('decide', pro_id=p[0]) }}" method="post">
                             <p>Signifigance = {{ re[1]}}</p>
@@ -128,8 +128,8 @@
                             <p>Outcomes = {{ re[3]}}</p>
                             <p>Budget Proposal = {{ re[4]}}</p>
                             <p>comments = {{ re[5]}}</p>
-                            <button style="font-weight: bold;" name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="accept">Accept</button>
-                            <button style="font-weight: bold;" name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="decline">Decline</button>
+                            <button name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="accept">Accept</button>
+                            <button name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="decline">Decline</button>
                           </form>
                         </div>
 
@@ -154,8 +154,8 @@
 
           <div class="admin-item">
             <input type="checkbox" id="arrow3">
-            <label class="expand" for="arrow3"> Data</label>
-            <div class="panel">
+            <label class="expand" id="target" for="arrow3"> Data</label>
+            <div class="panel" id="admin-panel">
               <div class="d-flex w-100 justify-content-between">
                 <p></p>
               </div>

@@ -131,10 +131,10 @@ def dashboard():
         return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info)
 
     elif usertype == 'researcher':
-        assign = select_where('*', 'proposals', 'assigned_reviewer', 'NULL')
+        grant = select_all("grants")
         pending = join_where_null('*', 'proposals', 'reviewer', 'submitted_by','email','proposals.approved')
 
-        return render_template('gsdash.html', assign=assign, pending=pending)
+        return render_template('gsdash.html', grant=grant, pending=pending)
 
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)

@@ -8,19 +8,54 @@ html {
   height: 100%;
 }
 
+.dark-mode {
+  --mainBG: linear-gradient(#ff9020,#e36c4f,#d84242,#7a2477,#3d1b81);
+  --divBG:rgba(0, 0, 0, 0.5);
+  --headerText: rgb(253, 228, 218);
+  --contrastText: antiquewhite;
+  --linkColor: aqua;
+  --sectionBG: rgba(0, 0, 0, 0.5);
+  --divColor: rgba(0, 0, 0, 0.5);
+  --invertColor: invert(1);
+  --modalBG: rgba(0, 0, 0, 0.9);
+}
+.light-mode {
+  --mainBG: linear-gradient(#f0f1f6 85%, #fdecaf 90%, #e27474 95%, rgba(122,36,119,.8) 100%);
+  --divBG:rgba(255, 255, 255, 0.5);
+  --headerText: rgb(255, 90, 27);
+  --linkColor: rgb(255, 90, 27);
+  --contrastText:rgb(65, 65, 65);
+  --sectionBG: rgba(202, 202, 202, 0.5);
+  --divColor: rgba(255, 255, 255, 0.5);
+  --invertColor: invert(0);
+  --modalBG: #f0f1f6;
+}
+
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(#ff9020,#e36c4e,#d84242,#7a2477,#3d1b81);
+  background: var(--mainBG);
   background-repeat: no-repeat;
   background-attachment: fixed;
   font-family: 'Poppins', Helvetica, Arial, sans-serif;
   overflow: auto;
 }
 
+.btn-toggle {
+  background-color: transparent;
+  color: var(--contrastText);
+  font-weight: 700;
+  border: none;
+  float: right;
+}
+
+.btn-toggle img {
+  filter: var(--invertColor);
+  width: 20px;
+}
 
 body::-webkit-scrollbar {
-  width: 9px;
+  width: 10px;
   opacity: 0.75;
 }
 
@@ -40,15 +75,11 @@ body::-webkit-scrollbar-thumb:hover {
   background: #555; 
 }
 
-a {
-  padding: 10px;
+.reg-log {
+  color: var(--linkColor);
+  font-weight: 700;
   font-size: .75em;
-}
-
-p {
-  font-size: 15px;
-  color: rgb(253, 228, 218);
-  font-weight: lighter;
+  padding: 10px;
 }
 
 .card {
@@ -56,7 +87,7 @@ p {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.45);
+  background-color: var(--divBG);
   padding: 50px 25px 50px 25px;
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2), 0 5px 20px 0 rgba(0, 0, 0, 0.2);
   border-radius: 5px;
@@ -64,7 +95,7 @@ p {
 
 .form-check-label,
 .login-space h1{
-  color: rgb(253, 228, 218);
+  color: var(--headerText);
   font-weight: bold;
 }
 
@@ -96,7 +127,7 @@ p {
 }
 
 .form-group input::placeholder {
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--contrastText);
 }
 
 .form-group input:focus {
@@ -105,16 +136,11 @@ p {
   font-weight: bold;
 }
 
-.grant-list-item,
-#reg-link {
-  color:aqua;
-}
-
 #btn {
   background-color: rgb(255, 72, 0);
   border: none;
   border-radius: 10px;
-  color: rgb(220, 220, 220);
+  color: antiquewhite;
   padding: 5px 10px;
   margin-top: 35px;
   font-weight: 900;
@@ -139,52 +165,9 @@ p {
   align-items: center;
 }
 
-.item {
-  margin-left: 300px;
-  color: antiquewhite;
-}
-
-#dash-table {
-  min-width: inherit;
-  color: antiquewhite;
-  border-radius: 0px 0px 5px 5px;
-}
-#dash-table tr:hover {
-  background-color: rgba(255, 72, 0, .5);
-  color: antiquewhite;
-}
-
-.grants-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.45);
-  box-shadow: 0 -7px 10px 3px rgba(0, 0, 0, 0.2);
-  min-height: 100%;
-  max-width: 100%;
-}
-
-.grants-header {
-  display: flex;
-  align-self: flex-end;
-  min-width: 60%;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 10;
-}
-
-.grants-header h1 {
-  font-weight: bold;
-}
-
-.grant-list-item {
-  align-self: flex-end;
-  min-width: 80%;
-}
-
 .expand {
-  background-color: rgba(25, 25, 25, 0.5);
-  color: antiquewhite;
+  background-color: var(--divColor);
+  color: var(--contrastText);
   font-size: 17px;
   font-weight: 600;
   width: 600px;
@@ -205,16 +188,17 @@ p {
 }
 
 .note-editable > font {
-  color: #fff;
+  color: var(--contrastText);
 }
 
 .note-btn.active {
-  color: #333;
+  color: var(--contrastText);
   background-color: rgb(255, 90, 17);
   border-color: rgb(255, 90, 17);		   
 }
 
 .active {
+  color: var(--contrastText);
   border-radius: 5px;
 }
 
@@ -243,23 +227,36 @@ input[type='checkbox'] + label:before {
   font-weight:900;
 }
 
-input[type='checkbox']:checked + label:before {
+input[type='checkbox']:checked + label:before{
   content: "\f107";
   font-weight:900;
 }
 
-.panel {
+#gs-panel,
+#admin-panel {
   width: 600px;
   padding: 5px 18px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--divColor);
   overflow: hidden;
   border-radius: 0px 0px 5px 5px;
 }
 
-.panel p{
-  color: antiquewhite;
+#gs-panel a,
+#admin-panel a, p, li {
+  color: var(--contrastText);
 }
 
+.gs-container li {
+  border: none;
+  background-color: transparent;
+  font-weight: 700;
+}
+
+#target {
+  background-color: var(--divColor);
+}
+
+.gs-dash,
 .reviewer-dash,
 .admin-dash,
 .pro-review,
@@ -270,10 +267,10 @@ input[type='checkbox']:checked + label:before {
   height: auto;
   min-height: 100%;
   float: right;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--sectionBG);
 }
 
-
+.gs-container,
 .reviewer-container,
 .admin-container,
 .pro-container,
@@ -292,16 +289,21 @@ input[type='checkbox']:checked + label:before {
 .account-card {
   position: relative;
   padding: 5px 15px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--divColor);
   border-radius: 5px;
   width: 700px;
   height: 500px;
 }
 
+.account-card h4,label {
+  color: var(--contrastText) !important;
+  font-weight: 700;
+}
+
 .grant-table-item {
   position: relative;
   padding: 5px 15px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--divColor);
   border-radius: 5px;
   min-width: 700px;
   width: fit-content;
@@ -313,32 +315,49 @@ input[type='checkbox']:checked + label:before {
 .pro-card {
   position: relative;
   padding: 15px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--divColor);
   border-radius: 5px;
   width: 700px;
   height: 100%;
 }
 
 .pro-card label {
-  color: antiquewhite;
-  padding-top: 20px;
+  color: var(--contrastText);
+  width: 40px;
+  text-align: left;
   font-weight: 700;
+  font-size: 1.55em;  
+  padding-right: 60%;
+  padding-bottom: 5px;
+  padding-top: 20px;
+}
+
+.pro-card input:hover{
+  cursor: pointer;
 }
 
 .pro-card select, option {
   font-weight: 700;
 }
 
+#gs-table,
 #reviewer-table,
 .form-group label,
 #grants-table,
 .card-title {
-  color: antiquewhite;
+  color: var(--contrastText);
+  font-weight: 700;
 }
 
-#reviewer-table,
-#grants-table {
-  table-layout: fixed;
+#gs-table th,
+#reviewer-table th {
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.grants-table th {
+  font-weight: 700;  
+  font-size: 25px;
 }
 
 #grants-table th:nth-child(1) {
@@ -350,6 +369,8 @@ input[type='checkbox']:checked + label:before {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+#gs-table th:nth-child(2),
 #reviewer-table th:nth-child(2),
 #grants-table th:nth-child(2) {
   width: 30%;
@@ -361,7 +382,7 @@ input[type='checkbox']:checked + label:before {
 #reviewer-table tbody tr:hover,
 #grants-table tr:hover {
   font-weight: 700;
-  color: rgb(255, 72, 0);
+  color: rgb(255, 90, 25);
 }
 
 .admin-item li{
@@ -376,7 +397,6 @@ input[type='checkbox']:checked + label:before {
 }
 
 .pro-review .pro-download,
-.modal-body button,
 .admin-item button {
   background-color: rgb(255, 72, 0);
   color: antiquewhite;
@@ -392,9 +412,17 @@ input[type='checkbox']:checked + label:before {
   background-color: rgba(255, 72, 0, 0.75);
 }
 
-.admin-item .modal-content h4,
-.admin-item .modal-content p {
-  color:rgb(45, 45, 45);
+.modal-header, .modal-body, .modal-footer
+{
+  background-color: var(--modalBG);
+  border-color: var(--sectionBG);
+}
+.modal-body button {
+  padding: 5px;
+  margin-top: 15px;
+}
+.modal-content h4, .modal-content p {
+  color:var(--contrastText);
   font-weight: 700;
   word-wrap: break-word;
 }
@@ -402,8 +430,8 @@ input[type='checkbox']:checked + label:before {
 .reviewer-expand {
   width: 800px;
   min-width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: antiquewhite;
+  background-color: var(--divColor);
+  color: var(--contrastText);
   font-size: 17px;
   font-weight: 600;
   cursor: pointer;
@@ -412,10 +440,13 @@ input[type='checkbox']:checked + label:before {
   border-radius: 5px 5px 0px 0px;
   transition: 0.4s;
 }
+.reviewer-panel:active {
+  color: var(--contrastText);
+}
 .reviewer-panel {
   width: 800px;
   min-width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--divColor);
   margin-bottom: 50px;
   border-radius: 0px 0px 5px 5px;
   padding: 20px;
@@ -425,3 +456,23 @@ input[type='checkbox']:checked + label:before {
   color: antiquewhite;
 }
 
+@media screen and (max-width: 800px) {
+  .gs-container,
+  .admin-container,
+  .reviewer-container,
+  .pro-container,
+  .account-container,
+  .grant-table-container {
+    position: relative;
+    float: left;
+    width: 100%;
+    max-width: 700px;
+  }
+  
+  #grants-table {
+    width: 100%;
+    border-left: 20px;
+    border-right: 20px;
+    overflow-x: scroll;
+  }
+}
