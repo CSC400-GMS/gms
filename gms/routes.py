@@ -459,7 +459,7 @@ def review_submit():
         sql_script(usql)
 
         sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
-        values = (id, sig, work, outcomes, budget, comments)
+        values = (pro_id, sig, work, outcomes, budget, comments)
         insert(sql, values)
 
         sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
@@ -478,67 +478,142 @@ def review_submit():
     return redirect(url_for('dashboard'))
 
 #generates report for a grant
-@app.route('/grant_report/<grant_id>', methods=['GET'])
-def grant_report(grant_id):
+@app.route('/grant_report/<r_type>/<grant_id>', methods=['GET'])
+def grant_report(r_type, grant_id):
 
-    #get information about the grant from db
-    grantInfo = join('*', 'proposals', 'grants', 'grant_id', 'id')
+    if r_type == 'Summary':
+        #get information about the grant from db
+        grantInfo = join('*', 'proposals', 'grants', 'grant_id', 'id')
 
-    accepted = []
-    denied = []
-    pending = []
+        accepted = []
+        denied = []
+        pending = []
 
-    award = 0
+        award = 0
 
-    for grant in grantInfo:
-        #determine status
-        if grant[10] == 1:
-            accepted.append(grant)
-            award += grant[6]
-        elif grant[10] == 0:
-            denied.append(grant)
+        for grant in grantInfo:
+            if (grant[7] == int(grant_id)):
+                #determine status
+                if grant[10] == 1:
+                    accepted.append(grant)
+                    award += grant[6]
+                elif grant[10] == 0:
+                    denied.append(grant)
+                else:
+                    pending.append(grant)
+
+        title = grantInfo[(int(grant_id) - 1)][15]
+
+        pdfstring = '<h1>'+title+" - "+r_type+' Report</h1><br>' + \
+            '<h3>Accepted - ' + str(len(accepted)) + ', Denied - ' + str(len(denied)) + ', Pending - ' + str(len(pending)) + '</h3><br>' + \
+            '<h3>Awarded Funding - ' + str(award) + '</h3>' + \
+            '<h3>Accepted Proposals</h3><br>'
+        
+        if len(accepted) == 0:
+            pdfstring += "<p>No proposals accepted at this time</p>"
         else:
-            pending.append(grant)
+            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Awarded Funding</th><th>Reviewer</th></tr>"
+            for a in accepted:
+                pdfstring += "<tr><td>"+a[12]+"</td><td>"+a[1]+"</td><td>"+str(a[6])+'</td><td>'+a[13]+"</td></tr>"
+            pdfstring += "</table>"
+        
+        pdfstring += '<h3>Denied Proposals</h3>'
 
-    pdfstring = '<h1>'+grantInfo[0][15]+'</h1><br>' + \
-        '<h3>Accepted - ' + str(len(accepted)) + ', Denied - ' + str(len(denied)) + ', Pending - ' + str(len(pending)) + '</h3><br>' + \
-        '<h3>Accepted Proposals</h3><br>'
+        if len(denied) == 0:
+            pdfstring += "No proposals denied at this time"
+        else:
+            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
+            for d in denied:
+                pdfstring += "<tr><td>"+d[12]+"</td><td>"+d[1]+"</td><td>"+str(d[6])+'</td><td>'+d[13]+"</td></tr>"
+            pdfstring += "</table>"
+        
+        pdfstring += '<h3>Pending Proposals</h3>'
+
+        if len(pending) == 0:
+            pdfstring += "No proposals pending at this time"
+        else:
+            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
+            for p in pending:
+                if p[13]:
+                    pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>'+p[13]+"</td></tr>"
+                else:
+                    pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>No Reviewer Assigned</td></tr>'
+            pdfstring += "</table>"    
+
+        #cant figure out to how download this, will fix later
+        conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        css = 'gms/static/styles/pdf.css'
+        pdfkit.from_string(pdfstring, "gms/static/grant_reports/"+str(grant_id)+".pdf", configuration=conf, css=css)
+
+        f = grant_id + '.pdf'
+        path = os.path.join('static/grant_reports/')
+        return send_file(path + f)
     
-    if len(accepted) == 0:
-        pdfstring += "<p>No proposals accepted at this time</p>"
-    else:
-        pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Awarded Funding</th><th>Reviewer</th></tr>"
-        for a in accepted:
-            pdfstring += "<tr><td>"+a[12]+"</td><td>"+a[1]+"</td><td>"+str(a[6])+'</td><td>'+a[13]+"</td></tr>"
-        pdfstring += "</table>"
-    
-    pdfstring += '<h3>Denied Proposals</h3>'
+    elif r_type == 'Budget':
+        #get information about the grant from db
+        title = select_where('title', 'grants', 'id', grant_id)
+        budget = join('*', 'proposals', 'budget', 'id', 'proposal_id')
 
-    if len(denied) == 0:
-        pdfstring += "No proposals denied at this time"
-    else:
-        pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
-        for d in denied:
-            pdfstring += "<tr><td>"+d[12]+"</td><td>"+d[1]+"</td><td>"+str(d[6])+'</td><td>'+d[13]+"</td></tr>"
-        pdfstring += "</table>"
-    
-    pdfstring += '<h3>Pending Proposals</h3>'
+        print(budget)
 
-    if len(pending) == 0:
-        pdfstring += "No proposals pending at this time"
-    else:
-        pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
-        for p in pending:
-            pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>'+p[13]+"</td></tr>"
-        pdfstring += "</table>"    
+        accepted = []
+        denied = []
+        pending = []
 
-    #cant figure out to how download this, will fix later
-    conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
-    pdfkit.from_string(pdfstring, "gms/static/grant_reports/"+str(grant_id)+".pdf", configuration=conf)
+        award = 0
 
-    f = grant_id + '.pdf'
-    path = os.path.join('static/grant_reports/')
-    return send_file(path + f)
+        for b in budget:
+            if (b[7] == int(grant_id)):
+                #determine status
+                if b[10] == 1:
+                    accepted.append(b)
+                    award += b[6]
+                elif b[10] == 0:
+                    denied.append(b)
+                else:
+                    pending.append(b)
+
+        pdfstring = '<h1>'+title[0][0]+" - "+r_type+' Report</h1><br>' + \
+            '<h3>Accepted Items - ' + str(len(accepted)) + ', Denied Items - ' + str(len(denied)) + ', Pending Items - ' + str(len(pending)) + '</h3><br>' + \
+            '<h3>Awarded Funding - ' + str(award) + '</h3>' + \
+            '<h3>Accepted Proposal Budgets</h3><br>'
+        
+        if len(accepted) == 0:
+            pdfstring += "<p>No proposals accepted at this time</p>"
+        else:
+            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Budget Item Name</th><th>Cost</th><th>Justification</th></tr>"
+            for a in accepted:
+                pdfstring += "<tr><td>"+a[12]+"</td><td>"+a[1]+"</td><td>"+str(a[15])+'</td><td>'+str(a[16])+"</td><td>"+a[17]+"</tr>"
+            pdfstring += "</table>"
+        
+        pdfstring += '<h3>Denied Proposal Budgets</h3>'
+
+        if len(denied) == 0:
+            pdfstring += "No proposals denied at this time"
+        else:
+            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Budget Item Name</th><th>Cost</th><th>Justification</th></tr>"
+            for d in denied:
+                pdfstring += "<tr><td>"+d[12]+"</td><td>"+d[1]+"</td><td>"+str(d[15])+'</td><td>'+str(d[16])+"</td><td>"+d[17]+"</tr>"
+            pdfstring += "</table>"
+        
+        pdfstring += '<h3>Pending Proposal Budgets</h3>'
+
+        if len(pending) == 0:
+            pdfstring += "No proposals pending at this time"
+        else:
+            pdfstring += "<table style='border: 1px solid black;'><tr><th>Name</th><th>Proposal Title</th><th>Budget Item Name</th><th>Cost</th><th>Justification</th></tr>"
+            for p in pending:
+                pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[15])+'</td><td>'+str(p[16])+"</td><td>"+p[17]+"</tr>"
+            pdfstring += "</table>"    
+
+        #cant figure out to how download this, will fix later
+        conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        css = 'gms/static/styles/pdf.css'
+        pdfkit.from_string(pdfstring, "gms/static/grant_reports/"+str(grant_id)+".pdf", configuration=conf, css=css)
+
+        f = grant_id + '.pdf'
+        path = os.path.join('static/grant_reports/')
+        return send_file(path + f)
 
 #logs user out
 @app.route('/logout')
