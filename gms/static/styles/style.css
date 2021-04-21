@@ -239,6 +239,7 @@ input[type='checkbox']:checked + label:before{
   background-color: var(--divColor);
   overflow: hidden;
   border-radius: 0px 0px 5px 5px;
+  box-shadow: 0 7px 10px 3px rgba(0, 0, 0, 0.2);
 }
 
 #gs-panel a,
@@ -385,7 +386,7 @@ input[type='checkbox']:checked + label:before{
   color: rgb(255, 90, 25);
 }
 
-.admin-item li{
+.admin-item li {
   background-color:transparent;
   border-color: transparent;
 }
@@ -394,6 +395,16 @@ input[type='checkbox']:checked + label:before{
   color: antiquewhite;
   font-size: large;
   font-weight: 700;
+}
+
+#admin-panel ul, p {
+  font-weight: 700;
+  color: var(--contrastText);
+}
+
+#awarded {
+  font-size: 20px;
+  color: var(--headerText);
 }
 
 .pro-review .pro-download,
@@ -449,7 +460,8 @@ input[type='checkbox']:checked + label:before{
   background-color: var(--divColor);
   margin-bottom: 50px;
   border-radius: 0px 0px 5px 5px;
-  padding: 20px;
+  padding: 20px;  
+  box-shadow: 0 7px 10px 3px rgba(0, 0, 0, 0.2);
 }
 .pro-review button,
 .reviewer-panel p{

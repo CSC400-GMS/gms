@@ -127,14 +127,17 @@ def dashboard():
         reviewer = select_all('reviewer')
         approval = join('*', 'proposals', 'reports', 'id', 'proposal_id')
         re_info = select_all('report_info')
+        total = select_where('*', 'proposals', 'approved', '1')
+        gt = select_sum('funding_re', 'proposals', 'approved', '1')
         print(grant)
-        return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info)
+
+        return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info, total=total, gt=gt)
 
     elif usertype == 'researcher':
         grant = select_all("grants")
-        pending = join_where_null('*', 'proposals', 'reviewer', 'submitted_by','email','proposals.approved')
-
-        return render_template('gsdash.html', grant=grant, pending=pending)
+        pending = join_where_null('*', 'proposals', 'researcher', 'submitted_by','email','proposals.approved')        
+        done = select_all('proposals')
+        return render_template('gsdash.html', grant=grant, pending=pending, done=done)
 
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)

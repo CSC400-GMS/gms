@@ -46,7 +46,7 @@
                         <!-- Modal body -->
                         <div class="modal-body">
                           <p>Title: {{ g[1] }}</p>
-                          <p>Summary: {{ g[2] | replace('<p>','') | replace('</p>','') }} </p>
+                          <p>Summary: {{ g[2] | striptags }} </p>
 			                    <form action="{{ url_for('assign') }}" method="post">
                             <p>Reviewers in the {{g[22]}} Department:</p>
                             <select name="remail" class="custom-select" id="inputGroupSelect0{{g[0]}}">
@@ -120,14 +120,14 @@
                         <div class="modal-body">
                           <p>Title: {{ p[1] }}</p>
                           <br>
-                          <p>Summary: {{ p[2] | replace('<p>','') | replace('</p>','') }} </p>
+                          <p>Summary: {{ p[2] | striptags }} </p>
                           <br>
 			                    <form  action="{{ url_for('decide', pro_id=p[0]) }}" method="post">
                             <p>Signifigance = {{ re[1]}}</p>
                             <p>Work Plan = {{ re[2]}}</p>
                             <p>Outcomes = {{ re[3]}}</p>
                             <p>Budget Proposal = {{ re[4]}}</p>
-                            <p>comments = {{ re[5]}}</p>
+                            <p>comments = {{ re[5] | striptags }}</p>
                             <button name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="accept">Accept</button>
                             <button name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="decline">Decline</button>
                           </form>
@@ -154,10 +154,21 @@
 
           <div class="admin-item">
             <input type="checkbox" id="arrow3">
-            <label class="expand" id="target" for="arrow3"> Data</label>
+            <label class="expand" id="target" for="arrow3"> Awarded to Date </label>
             <div class="panel" id="admin-panel">
               <div class="d-flex w-100 justify-content-between">
-                <p></p>
+                <ul class="list-group">                  
+                    {% if total %}
+                      {% for t in total %}
+                      <li class="list-group-item d-flex justify-content-between align-items-center"></li>
+                        Proposal #{{ t[0] }} Awarded: {{ "${:,.2f}".format(t[6]) }}
+                      </li>
+                      {% endfor %}
+                    {% endif %}
+                </ul>
+                {% for g in gt %}
+                <p id="awarded">Total Awarded to Date: {{ "${:,.2f}".format(g[0]) }}</p>
+                {% endfor %}
               </div>
             </div>
           </div>

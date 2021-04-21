@@ -19,7 +19,6 @@ def sql_script(sql):
 	db.commit()
 
 
-
 def insert(sql, info):
 	db = get_db()
 	c = db.cursor()
@@ -48,6 +47,14 @@ def select_all(table):
     db = get_db()
     c = db.cursor()
     x = "select * FROM "+ table + ";"
+    c.execute(x)
+    l = c.fetchall()
+    return l
+
+def select_sum(col, table, x, par):
+    db = get_db()
+    c = db.cursor()
+    x = 'select sum('+col+') from '+table+' where '+x+'= \''+par+'\';'
     c.execute(x)
     l = c.fetchall()
     return l
@@ -86,7 +93,7 @@ def join_where_null(col, table1, table2, x, y, z):
     c.execute(x)
     l = c.fetchall()
     return l
-
+    
 def join(col, table1, table2, x, y):
     db = get_db()
     c = db.cursor()

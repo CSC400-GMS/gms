@@ -20,23 +20,32 @@
           <label class="expand" id="target" for="arrow1"> Recently Added Grants </label> 
           <div class="panel" id="gs-panel">
           {% if grant %}
-          {% for g in grant[0:5] %}
-          <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <a href="{{ url_for('showGrant', grantid=g[0]) }} " class="gs-link">{{ g[1] }} &emsp; - &emsp; Posted on: {{ g[5] }} </a>
-            </li>
-          </ul>
+          <table class=" table table-hover table-borderless" id="gs-table">
+            <thead>
+              <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Posted On</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for g in grant[0:5] %}
+            <tr>
+              <td> {{ g[1] }} </td>
+              <td> {{ g[5] }} </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
           {% else %}
           <p>No grants have been added recently.</p>
-          {% endfor %}
-          {% endif %}
+        {% endif %}
           </div>
         </div>
         <div class="gs-item">
           <input type="checkbox" id="arrow2">
           <label class="expand" id="target" for="arrow2"> Pending Applications</label> 
           <div class="panel" id="gs-panel">
-          {% if pending %}
+          {% if pending is not none %}
           <table class=" table table-hover table-borderless" id="gs-table">
             <thead>
               <tr>
@@ -46,12 +55,10 @@
             </thead>
             <tbody>
             {% for p in pending %}
-              {% if p[11] == current_user.id %}
               <tr>
                 <td> {{ p[1] }} </td>
-                <td> {{ p[7] }} </td>
+                <td> {{ p[8] }} </td>
               </tr>
-            {% endif %}
             {% endfor %}
             </tbody>
           </table>
@@ -62,9 +69,38 @@
         </div>
         <div class="gs-item">
           <input type="checkbox" id="arrow3">
-          <label class="expand" id="target" for="arrow3"> Data</label> 
+          <label class="expand" id="target" for="arrow3"> Proposal History</label> 
           <div class="panel" id="gs-panel">
-	    <p></p>
+            {% if done is not none %}
+            <table class=" table table-hover table-borderless" id="gs-table">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Submitted On</th>
+                  <th scope="col">Decision</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for d in done %}
+                {% if d[12] == current_user.id %}
+                {% if d[10] is not none %}
+                <tr>
+                  <td> {{ d[1] }} </td>
+                  <td> {{ d[8] }} </td>
+                  {% if d[10] == 1 %}
+                  <td> Approved </td>
+                  {% else  %}
+                  <td> Rejected </td>
+                  {% endif %}
+                </tr>
+                {% endif %}
+                {% endif %}
+              {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+              <p>No history available.</p>
+            {% endif %}
           </div>
         </div>
       </div>
