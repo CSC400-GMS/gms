@@ -34,11 +34,11 @@
            <tr onclick="window.location.href='{{ url_for('showGrant', grantid=grant[0]) }}'">
                <td>{{ grant[0] }}</td>
                <td>{{ grant[1] }}</td>
-               <td>{{ grant[2] }}</td>
+               <td>{{ grant[3] }}</td>
                <td>{{ grant[4] }}</td>
                <td>{{ grant[6] }}</td>
-               <td><a type="submit" id="btn" href="{{ url_for('grant_report', r_type='Summary', grant_id=grant[0]) }}">Generate Summary Report</a></td>
-               <td><a type="submit" id="btn" href="{{ url_for('grant_report', r_type='Budget', grant_id=grant[0]) }}">Generate Budget Report</a></td>
+               <td><a type="submit" id="btn" href="{{ url_for('grant_report', r_type='Summary', grant_id=grant[0]) }}">Generate<br>Summary<br>Report</a>
+               <a type="submit" id="btn" href="{{ url_for('grant_report', r_type='Budget', grant_id=grant[0]) }}">Generate<br>Budget<br>Report</a></td>
            </tr>
 	        {% endfor %}
          </tbody>
