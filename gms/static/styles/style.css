@@ -18,6 +18,7 @@ html {
   --divColor: rgba(0, 0, 0, 0.5);
   --invertColor: invert(1);
   --modalBG: rgba(0, 0, 0, 0.9);
+  --scrollBar: gray;
 }
 .light-mode {
   --mainBG: linear-gradient(#f0f1f6 85%, #fdecaf 90%, #e27474 95%, rgba(122,36,119,.8) 100%);
@@ -29,6 +30,7 @@ html {
   --divColor: rgba(255, 255, 255, 0.5);
   --invertColor: invert(0);
   --modalBG: #f0f1f6;
+  --scrollBar: rgb(65, 65, 65);
 }
 
 body {
@@ -54,6 +56,9 @@ body {
   width: 20px;
 }
 
+.reviewer-panel::-webkit-scrollbar,
+#admin-panel::-webkit-scrollbar,
+#gs-panel::-webkit-scrollbar,
 body::-webkit-scrollbar {
   width: 10px;
   opacity: 0.75;
@@ -63,14 +68,28 @@ body::-webkit-scrollbar {
 body::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.9);
 }
+
+.reviewer-panel::-webkit-scrollbar-track,
+#admin-panel::-webkit-scrollbar-track,
+#gs-panel::-webkit-scrollbar-track {
+  background-color: var(--invertColor);
+}
  
 /* Handle */
 body::-webkit-scrollbar-thumb {
   background: rgb(45, 45, 45); 
   border-radius: 5px;
 }
+.reviewer-panel::-webkit-scrollbar-thumb,
+#admin-panel::-webkit-scrollbar-thumb,
+#gs-panel::-webkit-scrollbar-thumb {
+  background: var(--scrollBar); 
+}
 
 /* Handle on hover */
+.reviewer-panel::-webkit-scrollbar-thumb:hover,
+#admin-panel::-webkit-scrollbar-thumb:hover,
+#gs-panel::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover {
   background: #555; 
 }
@@ -240,6 +259,8 @@ input[type='checkbox']:checked + label:before{
   overflow: hidden;
   border-radius: 0px 0px 5px 5px;
   box-shadow: 0 7px 10px 3px rgba(0, 0, 0, 0.2);
+  max-height: 250px;
+  overflow: scroll;
 }
 
 #gs-panel a,
@@ -483,6 +504,8 @@ input[type='checkbox']:checked + label:before{
   border-radius: 0px 0px 5px 5px;
   padding: 20px;  
   box-shadow: 0 7px 10px 3px rgba(0, 0, 0, 0.2);
+  max-height: 250px;
+  overflow: scroll;
 }
 .pro-review button,
 .reviewer-panel p{

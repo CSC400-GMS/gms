@@ -28,7 +28,7 @@
               </tr>
             </thead>
             <tbody>
-            {% for g in grant[0:5] %}
+            {% for g in grant %}
             <tr onclick="window.location.href='{{ url_for('showGrant', grantid=g[0]) }}'">
               <td> {{ g[1] }} </td>
               <td> {{ g[5] }} </td>
