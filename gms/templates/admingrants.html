@@ -26,7 +26,9 @@
               <th scope="col">Sponsor</th>
               <th scope="col">Requirements</th>
               <th scope="col">Deadline</th>
+	      {% if current_user.account == 'admin' %}
               <th scope="col">Report</th>
+	      {% endif %}
             </tr>
           </thead>
 	        {% for grant in grants%}
@@ -37,9 +39,11 @@
                <td>{{ grant[3] }}</td>
                <td>{{ grant[4] }}</td>
                <td>{{ grant[6] }}</td>
+	       {% if current_user.account == 'admin' %}
                <td><a type="submit" id="btn" href="{{ url_for('grant_report', r_type='Summary', grant_id=grant[0]) }}">Generate<br>Summary<br>Report</a>
                <a type="submit" id="btn" href="{{ url_for('grant_report', r_type='Budget', grant_id=grant[0]) }}">Generate<br>Budget<br>Report</a></td>
            </tr>
+	   	{% endif %}
 	        {% endfor %}
          </tbody>
        </table>

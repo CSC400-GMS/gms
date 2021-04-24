@@ -570,7 +570,7 @@ def grant_report(r_type, grant_id):
                 #determine status
                 if b[10] == 1:
                     accepted.append(b)
-                    award += b[6]
+                    award += int(b[16])
                 elif b[10] == 0:
                     denied.append(b)
                 else:
