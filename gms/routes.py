@@ -137,7 +137,7 @@ def dashboard():
         grant = select_all("grants")
         pending = join_where_null('*', 'proposals', 'researcher', 'submitted_by','email','proposals.approved')        
         done = select_all('proposals')
-        return render_template('gsdash.html', grant=grant, pending=pending, done=done)
+        return render_template('gsdash.html', grant=grant, pending=pending, done=done, id=current_user.id)
 
     elif usertype == 'reviewer':
         assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
