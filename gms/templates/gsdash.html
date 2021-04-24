@@ -55,10 +55,12 @@
             </thead>
             <tbody>
             {% for p in pending %}
+            {% if p[12] == id %}
               <tr>
                 <td> {{ p[1] }} </td>
                 <td> {{ p[8] }} </td>
               </tr>
+            {% endif %}
             {% endfor %}
             </tbody>
           </table>
