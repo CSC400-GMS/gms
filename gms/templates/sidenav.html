@@ -113,7 +113,6 @@ button {
     <h2>{{ current_user.account|title }}</h2>
 {% endif %}
     <a href="{{ url_for('dashboard') }}">Dashboard</a>
-    <a href="#">Messages</a>
     <a href="{{ url_for('grants') }}">Grants</a>
     <a class="bottom" id="bottom-logout" href="{{ url_for('logout') }}">Logout </a>
     <a class="bottom" id="bottom-setting" href="{{ url_for('account') }}"><i class="fas fa-cog"></i></a>

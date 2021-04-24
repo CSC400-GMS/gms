@@ -49,7 +49,7 @@
                   {% if p[19] != 1 %}
                   <tr onclick="window.location.href='{{ url_for('pro_review', pro_id=p[0]) }}';">
                     <td> {{ p[1] }} </td>
-                    <td> {{ p[2] | striptags }} </td>
+                    <td> {{ p[2] | striptags | truncate(50, False) }} </td>
                     <td> {{ p[12] }} </td>
                     <td> {{ p[8] }}</td>
                     <td> {{ p[13] }}</td>

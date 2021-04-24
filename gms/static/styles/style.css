@@ -286,6 +286,10 @@ input[type='checkbox']:checked + label:before{
   padding-top: 25px;
 }
 
+.pro-container textarea {
+  color: var(--contrastText);
+}
+
 .grant-table-container {
   max-width: 70%;
   margin-left: 300px;
@@ -395,6 +399,8 @@ input[type='checkbox']:checked + label:before{
 #grants-table thead th:nth-child(6) {
   padding-left: 55px;
 }
+
+#gs-table tbody tr:hover,
 #reviewer-table tbody tr:hover,
 #grants-table tbody tr:hover {
   font-weight: 700;
