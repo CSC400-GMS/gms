@@ -120,18 +120,17 @@ def register():
 def dashboard():
     usertype = current_user.account
     if usertype == 'admin':
-        assign = select_where_null('*', 'proposals', 'assigned_reviewer')
-        grant = join_where_null('*', 'proposals', 'grants', 'grant_id', 'id', 'proposals.assigned_reviewer')
-        pending = select_where('*', 'proposals', 'approved', 'NULL')
-        test = select_all("proposals")
+        assign = select_where('*', 'proposals', 'assigned_reviewer', '0')
+        grant = join('*', 'proposals', 'grants', 'grant_id', 'id')
         reviewer = select_all('reviewer')
         approval = join('*', 'proposals', 'reports', 'id', 'proposal_id')
         re_info = select_all('report_info')
         total = select_where('*', 'proposals', 'approved', '1')
         gt = select_sum('funding_re', 'proposals', 'approved', '1')
+        distinct = select_where_null('DISTINCT proposal_id', 'reports', 'rev_reviewed')
         print(grant)
 
-        return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info, total=total, gt=gt)
+        return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info, total=total, gt=gt, distinct=distinct)
 
     elif usertype == 'researcher':
         grant = select_all("grants")
@@ -140,8 +139,8 @@ def dashboard():
         return render_template('gsdash.html', grant=grant, pending=pending, done=done, id=current_user.id)
 
     elif usertype == 'reviewer':
-        assign = select_where('*', 'proposals', 'assigned_reviewer', current_user.id)
-        pending = join('*', 'proposals', 'reports', 'id', 'proposal_id')
+        assign = select_where('*', 'reviewed_proposals', 'reviewer', current_user.id)
+        pending = join('*', 'proposals', 'reviewed_proposals', 'id', 'proposal_id')
         print(pending)
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
@@ -245,8 +244,8 @@ def pro_submit():
         post_date = now.strftime("%Y-%m-%d %H:%M:%S")
 
         #updating proposal info
-        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, grant_id, date_submitted, submitted_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        values = (title, summary, workplan, significance, outcome, amount, id, post_date, email)
+        sql = "INSERT into proposals(title, summary, workplan, significance, outcome, funding_re, grant_id, date_submitted, submitted_by, assigned_reviewer) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        values = (title, summary, workplan, significance, outcome, amount, id, post_date, email, 0)
 
         insert(sql, values)
 
@@ -308,32 +307,43 @@ def pro_submit():
 def assign():
 
     if request.method == 'POST':
-        email = request.form['remail']
-        seperate = email.split(" ")
-        email = seperate[0]
-        pid = seperate[1]
-        now = datetime.now()
-        assigned = now.strftime("%Y-%m-%d %H:%M:%S")
-
-        #make sure reviewer exists
-        exists = check_login(email)
-        if exists:
-
-            sql = 'UPDATE proposals SET assigned_reviewer=\''+email+'\', date_assigned=\''+assigned+'\' WHERE id=\''+pid+'\';'
-            values = (email, assigned, pid)
-            sql_script(sql)
-
-            rsql = 'Insert into reports(proposal_id, reviewer, assigned_by) values(?,?,?)'
-            info = (pid, email, current_user.id)
-            insert(rsql, info)
-
-            #send an email notification to reviewer
-            send_mail('You have a new proposal assignment!', email, render_template("prop_assigned.txt", email=email, admin=current_user.id, pid=pid))
+        pid = ''
+        relist = request.form.to_dict(flat=False)
+        values = relist.values()
+        for re in values:
+            for i in range(len(re)):
+                email = re[i]
+                seperate = email.split(" ")
+                email = seperate[0]
+                pid = seperate[1]
             
-            flash('Reviewer Assigned')
 
-        else:
-            flash('Reviewer specified does not exist')
+            #make sure reviewer exists
+                exists = check_login(email)
+                if exists:
+
+                    reviewsql = 'INSERT into reviewed_proposals(proposal_id, reviewer) values (?, ?)'
+                    val = (pid, email)
+                    insert(reviewsql, val)
+                else:
+                    flash('Reviewer specified does not exist')
+            
+
+                now = datetime.now()
+                assigned = now.strftime("%Y-%m-%d %H:%M:%S")
+                sql = 'UPDATE proposals SET assigned_reviewer='+str(1)+', date_assigned=\''+assigned+'\' WHERE id=\''+pid+'\';'
+                values = (email, assigned, pid)
+                sql_script(sql)
+
+
+        rsql = 'Insert into reports(proposal_id, assigned_by) values(?,?)'
+        info = (pid, current_user.id)
+        insert(rsql, info)
+        
+        #send an email notification to reviewer
+        send_mail('You have a new proposal assignment!', email, render_template("prop_assigned.txt", email=email, admin=current_user.id, pid=pid))        
+        flash('Reviewer Assigned')
+
     return redirect(url_for('dashboard'))
 
 #only for admin, processes a grant decision
@@ -424,10 +434,13 @@ def account():
 @login_required
 def pro_review(pro_id):
 
-    valid = select_where('assigned_reviewer', 'proposals', 'id', pro_id)
-    valid_check = valid[0][0]
-    print(valid)
-    print(valid_check)
+    valid = select_where('reviewer', 'reviewed_proposals', 'proposal_id', pro_id)
+    
+    test = False
+
+    for v in valid:
+        if v[0] == current_user.id:
+            test = True
 
     #serves proposal pdf file when user clicks the download button
     if request.method == 'POST':
@@ -436,7 +449,7 @@ def pro_review(pro_id):
         return send_file(path + f)
 
     #checks if user is allowed to view proposal
-    if current_user.account == 'reviewer' and valid_check == current_user.id:
+    if current_user.account == 'reviewer' and test:
         return render_template('pro_review.html', pro_id = pro_id)
     else:
         return redirect(url_for('dashboard'))
@@ -454,20 +467,40 @@ def review_submit():
         comments = request.form['comments']
         now = datetime.now()
         reviewed = now.strftime("%d-%b-%Y %H:%M:%S")
-        complete = 1
 
-        sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\' and reviewer = \'' +current_user.id+'\';'
-        id = sql_script(sql)
-        usql = 'UPDATE reports SET rev_reviewed=\''+reviewed+'\' WHERE proposal_id=\''+pro_id+'\';'
-        sql_script(usql)
-
-        sql= 'INSERT into report_info(id, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?)'
-        values = (pro_id, sig, work, outcomes, budget, comments)
+        #update new report
+        sql= 'INSERT into report_info(id, reviewer, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?, ?)'
+        values = (pro_id, current_user.id, sig, work, outcomes, budget, comments)
         insert(sql, values)
 
-        sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
-        print(sql)
-        sql_script(sql)
+        #determine if all reports are in
+        #initialize flag and create necesary reviewer list
+        complete = True
+        rlist = []
+
+        #determine necesary reviewers for completion
+        necesary = select_where("*", 'reviewed_proposals', 'proposal_id', pro_id)
+        for n in necesary:
+            reviewer = n[1]
+            rlist.append(reviewer)
+        
+        #check for reports submitted by all necesary reviewers
+        #if check comes up empty, there are still pending reviews
+        for r in rlist:
+            check = select_where('reviewer', 'report_info', 'reviewer', r)
+            if not check:
+                complete = False
+                break
+        
+        if complete:
+            sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\';'
+            id = sql_script(sql)
+            usql = 'UPDATE reports SET rev_reviewed=\''+reviewed+'\' WHERE proposal_id=\''+pro_id+'\';'
+            sql_script(usql)
+
+            sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
+            sql_script(sql)
+
 
     #Send admin a notif that a reviewer completed their review
     db = get_db()
@@ -617,6 +650,52 @@ def grant_report(r_type, grant_id):
         f = grant_id + '.pdf'
         path = os.path.join('static/grant_reports/')
         return send_file(path + f)
+
+@app.route('/reviewer_report/<pid>')
+def reviewer_report(pid):
+    reviewerList = select_where('reviewer', 'reviewed_proposals', 'proposal_id', pid)
+
+    count = len(reviewerList)
+    sig = 0
+    work = 0
+    out = 0
+    budg = 0
+    comments = []
+
+    #gather totals
+    for reviewer in reviewerList:
+        report = select_where('*', 'report_info', 'reviewer', reviewer[0])
+        sig += report[0][2]
+        work += report[0][3]
+        out += report[0][4]
+        budg += report [0][5]
+        comments.append(report[0][6])
+    
+    print(count)
+    #find averages
+    sig = sig / count
+    work = work / count
+    out = out / count
+    budg = budg / count
+
+    proposal = select_where('*', 'proposals', 'id', pid)
+
+    pdfstring = '<h1>'+proposal[0][1]+' Review Report</h1><br>' + \
+            '<h1>Average Scores</h1>' + \
+            '<h3>Significance - '+str(sig)+'/5</h3>' + \
+            '<h3>Work Plan - '+str(work)+'/5</h3>' + \
+            '<h3>Outcome - '+str(out)+'/5</h3>' + \
+            '<h3>Budget - '+str(budg)+'/5</h3><h1>Comments</h1>'
+    for comment in comments:
+        pdfstring += '<p>'+comment+'</p>'
+
+    conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+    css = 'gms/static/styles/pdf.css'
+    pdfkit.from_string(pdfstring, "gms/static/review_reports/"+str(pid)+".pdf", configuration=conf, css=css)
+
+    f = pid + '.pdf'
+    path = os.path.join('static/review_reports/')
+    return send_file(path + f)
 
 #logs user out
 @app.route('/logout')
