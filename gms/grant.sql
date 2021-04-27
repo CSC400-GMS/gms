@@ -60,7 +60,6 @@ CREATE TABLE if not exists reports(
   proposal_id int NOT NULL,
   assigned_by int,
   rev_reviewed datetime,
-  completed binary,
   FOREIGN KEY(proposal_id) references proposals(id)
 );
 
@@ -73,14 +72,15 @@ CREATE TABLE if not exists report_info(
   budget_proposal INTEGER NOT NULL,
   comments varchar(255) NOT NULL,
   FOREIGN KEY (id) references reports(id),
-  FOREIGN KEY (reviewer) references reviewed_proposals(reviewer),
+  FOREIGN KEY (reviewer) references assigned_proposals(reviewer),
   PRIMARY KEY(id, reviewer)
 );
 
 
-CREATE TABLE if not exists reviewed_proposals(
+CREATE TABLE if not exists assigned_proposals(
   proposal_id INTEGER NOT NULL,
   reviewer VARCHAR(255) NOT NULL,
+  completed binary,
   FOREIGN KEY(proposal_id) references proposals(id),
   FOREIGN KEY(reviewer) references reviewer(email),
   PRIMARY KEY(proposal_id, reviewer)
