@@ -12,13 +12,13 @@ html {
   --mainBG: linear-gradient(#ff9020,#e36c4f,#d84242,#7a2477,#3d1b81);
   --divBG:rgba(0, 0, 0, 0.5);
   --headerText: rgb(253, 228, 218);
-  --contrastText: antiquewhite;
+  --contrastText: rgb(250, 235, 215);
   --linkColor: aqua;
   --sectionBG: rgba(0, 0, 0, 0.5);
   --divColor: rgba(0, 0, 0, 0.5);
   --invertColor: invert(1);
   --modalBG: rgba(0, 0, 0, 0.9);
-  --scrollBar: gray;
+  --scrollBar: rgb(45,45,45);
 }
 .light-mode {
   --mainBG: linear-gradient(#f0f1f6 85%, #fdecaf 90%, #e27474 95%, rgba(122,36,119,.8) 100%);
@@ -30,7 +30,7 @@ html {
   --divColor: rgba(255, 255, 255, 0.5);
   --invertColor: invert(0);
   --modalBG: #f0f1f6;
-  --scrollBar: rgb(65, 65, 65);
+  --scrollBar: rgb(80, 80, 80);
 }
 
 body {
@@ -46,7 +46,7 @@ body {
 .btn-toggle {
   background-color: transparent;
   color: var(--contrastText);
-  font-weight: 700;
+  font-weight: 400;
   border: none;
   float: right;
 }
@@ -77,7 +77,7 @@ body::-webkit-scrollbar-track {
  
 /* Handle */
 body::-webkit-scrollbar-thumb {
-  background: rgb(45, 45, 45); 
+  background: var(--scrollBar); 
   border-radius: 5px;
 }
 .reviewer-panel::-webkit-scrollbar-thumb,
@@ -93,10 +93,14 @@ body::-webkit-scrollbar-thumb {
 body::-webkit-scrollbar-thumb:hover {
   background: #555; 
 }
-
+.reviewer-panel::-webkit-scrollbar-corner,
+#admin-panel::-webkit-scrollbar-corner,
+#gs-panel::-webkit-scrollbar-corner {
+  background: var(--scrollBar); 
+}
 .reg-log {
   color: var(--linkColor);
-  font-weight: 700;
+  font-weight: 400;
   font-size: .75em;
   padding: 10px;
 }
@@ -112,10 +116,13 @@ body::-webkit-scrollbar-thumb:hover {
   border-radius: 5px;
 }
 
-.form-check-label,
-.login-space h1{
+.form-check-label{
   color: var(--headerText);
-  font-weight: bold;
+  font-weight: 400;
+}
+.login-space h1 {
+  color: var(--headerText);
+  font-weight: 500;
 }
 
 .form-check-label {
@@ -142,7 +149,8 @@ body::-webkit-scrollbar-thumb:hover {
   border: 0;
   border-bottom: 1px solid rgb(255, 90, 27);
   background-color: inherit;
-  font-weight: bold;
+  font-weight: 400;
+  color: var(--contrastText);
 }
 
 .form-group input::placeholder {
@@ -152,17 +160,17 @@ body::-webkit-scrollbar-thumb:hover {
 .form-group input:focus {
   background-color: rgba(0, 0, 0, 0.45);
   color: rgb(220, 220, 220);
-  font-weight: bold;
+  font-weight: 400;
 }
 
 #btn {
   background-color: rgb(255, 72, 0);
   border: none;
   border-radius: 10px;
-  color: antiquewhite;
+  color: rgb(250, 235, 215);
   padding: 5px 10px;
   margin-top: 35px;
-  font-weight: 900;
+  font-weight: 500;
 }
 
 #btn:hover {
@@ -209,7 +217,9 @@ body::-webkit-scrollbar-thumb:hover {
 .note-editable > font {
   color: var(--contrastText);
 }
-
+.note-btn {
+  color: var(--contrastText);
+}
 .note-btn.active {
   color: var(--contrastText);
   background-color: rgb(255, 90, 17);
@@ -222,7 +232,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .active:not(.note-btn), .expand:hover {
-  background-color: rgba(0, 0, 0, 0.65);
+  background-color: rgba(129, 46, 46, 0.65);
   width: 600px;
   overflow: hidden;
 }
@@ -283,7 +293,8 @@ input[type='checkbox']:checked + label:before{
 .admin-dash,
 .pro-review,
 .grants,
-.account {
+.account,
+.proposal {
   position: relative;
   width: 100%;
   height: auto;
@@ -307,7 +318,8 @@ input[type='checkbox']:checked + label:before{
   padding-top: 25px;
 }
 
-.pro-container textarea {
+.pro-card textarea {
+  font-weight: 300;
   color: var(--contrastText);
 }
 
@@ -324,7 +336,10 @@ input[type='checkbox']:checked + label:before{
   width: 700px;
   height: 500px;
 }
-
+.account-card input {
+  color: var(--contrastText);
+  font-weight: 300;
+}
 .account-card h4,label {
   color: var(--contrastText) !important;
   font-weight: 700;
@@ -344,8 +359,12 @@ input[type='checkbox']:checked + label:before{
 .grant-table-item thead th {
   font-size: 25px;
 }
+.grant-table-item tbody td {
+  font-weight: 400;
+}
 .grant-table-item #btn {
   margin: 0 auto;
+  font-weight: 300;
 }
 
 .pro-card {
@@ -357,11 +376,13 @@ input[type='checkbox']:checked + label:before{
   height: 100%;
 }
 
+
+.form-group label,
 .pro-card label {
   color: var(--contrastText);
   width: 40px;
   text-align: left;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1.55em;  
   padding-right: 60%;
   padding-bottom: 5px;
@@ -373,24 +394,26 @@ input[type='checkbox']:checked + label:before{
 }
 
 .pro-card select, option {
-  font-weight: 700;
+  font-weight: 400;
 }
 
 #gs-table,
 #reviewer-table,
-.form-group label,
 #grants-table,
 .card-title {
   color: var(--contrastText);
   font-weight: 700;
 }
 
-#gs-table th,
-#reviewer-table th {
-  font-weight: 900;
-  font-size: 20px;
+#gs-table thead th,
+#reviewer-table thead th {
+  font-weight: 700;
+  font-size: large;
 }
-
+#gs-table tbody td,
+#reviewer-table tbody td {
+  font-weight: 400;
+}
 .grants-table th {
   font-weight: 700;  
   font-size: 25px;
@@ -424,7 +447,7 @@ input[type='checkbox']:checked + label:before{
 #gs-table tbody tr:hover,
 #reviewer-table tbody tr:hover,
 #grants-table tbody tr:hover {
-  font-weight: 700;
+  font-weight: 300;
   color: rgb(255, 90, 25);
 }
 
@@ -434,13 +457,13 @@ input[type='checkbox']:checked + label:before{
 }
 
 .admin-item a {
-  color: antiquewhite;
+  color: rgb(250, 235, 215);
   font-size: large;
-  font-weight: 700;
+  font-weight: 300;
 }
 
 #admin-panel ul, p {
-  font-weight: 700;
+  font-weight: 400;
   color: var(--contrastText);
 }
 
@@ -452,8 +475,8 @@ input[type='checkbox']:checked + label:before{
 .pro-review .pro-download,
 .admin-item button {
   background-color: rgb(255, 72, 0);
-  color: antiquewhite;
-  font-weight: 900;
+  color: rgb(250, 235, 215);
+  font-weight: 500;
   border: none;
   border-radius: 5px;
   padding: 5px;
@@ -476,29 +499,37 @@ input[type='checkbox']:checked + label:before{
 }
 .modal-content h4, .modal-content p {
   color:var(--contrastText);
-  font-weight: 700;
+  font-weight: 500;
   word-wrap: break-word;
 }
-
+.admin-expand label {
+  font-weight: 300;
+}
+.gs-expand,
+.admin-expand,
 .reviewer-expand {
-  width: 800px;
   min-width: 100%;
+  width: 900px;
   background-color: var(--divColor);
   color: var(--contrastText);
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   padding: 20px;
   box-shadow: 0 -7px 10px 3px rgba(0, 0, 0, 0.2);
   border-radius: 5px 5px 0px 0px;
   transition: 0.4s;
 }
+.gs-panel:active,
+.admin-panel:active,
 .reviewer-panel:active {
   color: var(--contrastText);
 }
+.gs-panel,
+.admin-panel,
 .reviewer-panel {
-  width: 800px;
   min-width: 100%;
+  width: 900px;
   background-color: var(--divColor);
   margin-bottom: 50px;
   border-radius: 0px 0px 5px 5px;
@@ -509,7 +540,7 @@ input[type='checkbox']:checked + label:before{
 }
 .pro-review button,
 .reviewer-panel p{
-  color: antiquewhite;
+  color: rgb(250, 235, 215);
 }
 
 @media screen and (max-width: 800px) {
@@ -523,7 +554,7 @@ input[type='checkbox']:checked + label:before{
     float: left;
     width: 100%;
     max-width: 700px;
-    overflow-x: scroll;
+    overflow: scroll;
   }
   
   .grant-table-container {
