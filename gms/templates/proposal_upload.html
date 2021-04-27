@@ -23,9 +23,8 @@
 
   <body class="dark-mode">
     {% include 'sidenav.html' %}
-
+    <section class="proposal">
     <div class="pro-container">
-
 
     <form action="{{url_for('pro_submit')}}" id='proposal_form' method='post' enctype='multipart/form-data'>
 	    <div class='pro-card'>
@@ -128,6 +127,7 @@
 	    </div>
     </form>
   </div>
+  </section>
 </body>
 </html>
 
