@@ -46,7 +46,7 @@
 
               {% for p in pending %}
                 {% if p[13] == 1 and p[15] == current_user.id %}
-                  {% if p[19] != 1 %}
+                  {% if p[16] != 1 %}
                   <tr onclick="window.location.href='{{ url_for('pro_review', pro_id=p[0]) }}';">
                     <td> {{ p[1] }} </td>
                     <td> {{ p[2] | striptags | truncate(50, False) }} </td>
@@ -78,8 +78,8 @@
                 </thead>
                 <tbody>
                   {% for p in pending %}
-		  {% if p[13] == current_user.id %}
-        {% if p[19] == 1 %}
+		  {% if p[15] == current_user.id %}
+        {% if p[16] == 1 %}
                   <tr>
                     <td> {{ p[1] }} </td>
                     <td> {{ p[12] }} </td>

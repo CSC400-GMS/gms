@@ -128,19 +128,18 @@ def dashboard():
         total = select_where('*', 'proposals', 'approved', '1')
         gt = select_sum('funding_re', 'proposals', 'approved', '1')
         distinct = select_where_null('DISTINCT proposal_id', 'reports', 'rev_reviewed')
-        print(grant)
 
         return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info, total=total, gt=gt, distinct=distinct)
 
     elif usertype == 'researcher':
         grant = select_all("grants")
-        pending = join_where_null('*', 'proposals', 'researcher', 'submitted_by','email','proposals.approved')        
+        pending = join_where_null('*', 'proposals', 'researcher', 'submitted_by','email','proposals.approved')
         done = select_all('proposals')
         return render_template('gsdash.html', grant=grant, pending=pending, done=done, id=current_user.id)
 
     elif usertype == 'reviewer':
-        assign = select_where('*', 'reviewed_proposals', 'reviewer', current_user.id)
-        pending = join('*', 'proposals', 'reviewed_proposals', 'id', 'proposal_id')
+        assign = select_where('*', 'assigned_proposals', 'reviewer', current_user.id)
+        pending = join('*', 'proposals', 'assigned_proposals', 'id', 'proposal_id')
         print(pending)
 
         return render_template('reviewerdash.html', assign=assign, pending=pending)
@@ -206,7 +205,7 @@ def grant_upload():
         researchers = c.fetchall()
         for email in researchers:
             send_mail("New Grant Posted!", email[0], render_template("new_prop.txt", dept=dept, title=title, fund=fund, sponsor=sponsor, deadline=deadline))
-           
+
 
     return render_template('grant_upload.html')
 
@@ -291,15 +290,15 @@ def pro_submit():
                 "gms/static/proposals/"+str(proposal_id)+".pdf", configuration=conf)
 
         flash('WEll DONE')
-    
-    #sending email notification 
+
+    #sending email notification
     db = get_db()
     c = db.cursor()
     c.execute('SELECT * FROM admin')
     admin = c.fetchall()
     for a in admin:
         send_mail("New proposal has posted!", a[1], render_template("prop_notif.txt", name=name, email=email, id=id))
-                
+
     return redirect(url_for('proposal_upload', test=id))
 
 #page for assigning reviewers, only visible by admin
@@ -316,18 +315,18 @@ def assign():
                 seperate = email.split(" ")
                 email = seperate[0]
                 pid = seperate[1]
-            
+
 
             #make sure reviewer exists
                 exists = check_login(email)
                 if exists:
 
-                    reviewsql = 'INSERT into reviewed_proposals(proposal_id, reviewer) values (?, ?)'
+                    reviewsql = 'INSERT into assigned_proposals(proposal_id, reviewer) values (?, ?)'
                     val = (pid, email)
                     insert(reviewsql, val)
                 else:
                     flash('Reviewer specified does not exist')
-            
+
 
                 now = datetime.now()
                 assigned = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -339,9 +338,9 @@ def assign():
         rsql = 'Insert into reports(proposal_id, assigned_by) values(?,?)'
         info = (pid, current_user.id)
         insert(rsql, info)
-        
+
         #send an email notification to reviewer
-        send_mail('You have a new proposal assignment!', email, render_template("prop_assigned.txt", email=email, admin=current_user.id, pid=pid))        
+        send_mail('You have a new proposal assignment!', email, render_template("prop_assigned.txt", email=email, admin=current_user.id, pid=pid))
         flash('Reviewer Assigned')
 
     return redirect(url_for('dashboard'))
@@ -413,7 +412,7 @@ def account():
 
         #Send email notification to user about account changes
         send_mail('Your Account Information Was Changed', current_user.id, render_template('acct_change.txt', fname=fname, lname=lname))
-        
+
         flash('Your account has been updated.', 'success')
         return redirect(url_for('account'))
 
@@ -434,8 +433,8 @@ def account():
 @login_required
 def pro_review(pro_id):
 
-    valid = select_where('reviewer', 'reviewed_proposals', 'proposal_id', pro_id)
-    
+    valid = select_where('reviewer', 'assigned_proposals', 'proposal_id', pro_id)
+
     test = False
 
     for v in valid:
@@ -468,6 +467,7 @@ def review_submit():
         now = datetime.now()
         reviewed = now.strftime("%d-%b-%Y %H:%M:%S")
 
+
         #update new report
         sql= 'INSERT into report_info(id, reviewer, signifigance, work_plan, outcomes, budget_proposal, comments) values(?, ?, ?, ?, ?, ?, ?)'
         values = (pro_id, current_user.id, sig, work, outcomes, budget, comments)
@@ -476,31 +476,41 @@ def review_submit():
         #determine if all reports are in
         #initialize flag and create necesary reviewer list
         complete = True
-        rlist = []
+        # rlist = []
 
         #determine necesary reviewers for completion
-        necesary = select_where("*", 'reviewed_proposals', 'proposal_id', pro_id)
-        for n in necesary:
-            reviewer = n[1]
-            rlist.append(reviewer)
-        
+        # necesary = select_where("*", 'assigned_proposals', 'proposal_id', pro_id)
+        # for n in necesary:
+        #     reviewer = n[1]
+        #     rlist.append(reviewer)
+
         #check for reports submitted by all necesary reviewers
         #if check comes up empty, there are still pending reviews
-        for r in rlist:
-            check = select_where('reviewer', 'report_info', 'reviewer', r)
-            if not check:
-                complete = False
-                break
-        
+        # for r in rlist:
+        #     check = select_where('reviewer', 'report_info', 'reviewer', r)
+        #     if not check:
+        #         complete = False
+        #         break
+
         if complete:
             sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\';'
             id = sql_script(sql)
             usql = 'UPDATE reports SET rev_reviewed=\''+reviewed+'\' WHERE proposal_id=\''+pro_id+'\';'
             sql_script(usql)
 
-            sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
+            sql = 'UPDATE assigned_proposals set completed = 1 where proposal_id =\''+ pro_id +'\' and reviewer= \''+ current_user.id +'\';'
             sql_script(sql)
 
+            pro_count = count_assigned_proposals(pro_id)
+            assigned_pros = select_where('*', 'assigned_proposals', 'proposal_id', pro_id)
+            count = 0
+            for x in assigned_pros:
+                if x[2] == 1:
+                    count += 1
+
+            if count == pro_count[0][0]:
+                sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
+                sql_script(sql)
 
     #Send admin a notif that a reviewer completed their review
     db = get_db()
@@ -544,7 +554,7 @@ def grant_report(r_type, grant_id):
             '<h3>Accepted - ' + str(len(accepted)) + ', Denied - ' + str(len(denied)) + ', Pending - ' + str(len(pending)) + '</h3><br>' + \
             '<h3>Awarded Funding - ' + str(award) + '</h3>' + \
             '<h3>Accepted Proposals</h3><br>'
-        
+
         if len(accepted) == 0:
             pdfstring += "<p>No proposals accepted at this time</p>"
         else:
@@ -552,7 +562,7 @@ def grant_report(r_type, grant_id):
             for a in accepted:
                 pdfstring += "<tr><td>"+a[12]+"</td><td>"+a[1]+"</td><td>"+str(a[6])+'</td><td>'+a[13]+"</td></tr>"
             pdfstring += "</table>"
-        
+
         pdfstring += '<h3>Denied Proposals</h3>'
 
         if len(denied) == 0:
@@ -562,7 +572,7 @@ def grant_report(r_type, grant_id):
             for d in denied:
                 pdfstring += "<tr><td>"+d[12]+"</td><td>"+d[1]+"</td><td>"+str(d[6])+'</td><td>'+d[13]+"</td></tr>"
             pdfstring += "</table>"
-        
+
         pdfstring += '<h3>Pending Proposals</h3>'
 
         if len(pending) == 0:
@@ -574,7 +584,7 @@ def grant_report(r_type, grant_id):
                     pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>'+p[13]+"</td></tr>"
                 else:
                     pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[6])+'</td><td>No Reviewer Assigned</td></tr>'
-            pdfstring += "</table>"    
+            pdfstring += "</table>"
 
         #cant figure out to how download this, will fix later
         conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
@@ -584,7 +594,7 @@ def grant_report(r_type, grant_id):
         f = grant_id + '.pdf'
         path = os.path.join('static/grant_reports/')
         return send_file(path + f)
-    
+
     elif r_type == 'Budget':
         #get information about the grant from db
         title = select_where('title', 'grants', 'id', grant_id)
@@ -613,7 +623,7 @@ def grant_report(r_type, grant_id):
             '<h3>Accepted Items - ' + str(len(accepted)) + ', Denied Items - ' + str(len(denied)) + ', Pending Items - ' + str(len(pending)) + '</h3><br>' + \
             '<h3>Awarded Funding - ' + str(award) + '</h3>' + \
             '<h3>Accepted Proposal Budgets</h3><br>'
-        
+
         if len(accepted) == 0:
             pdfstring += "<p>No proposals accepted at this time</p>"
         else:
@@ -621,7 +631,7 @@ def grant_report(r_type, grant_id):
             for a in accepted:
                 pdfstring += "<tr><td>"+a[12]+"</td><td>"+a[1]+"</td><td>"+str(a[15])+'</td><td>'+str(a[16])+"</td><td>"+a[17]+"</tr>"
             pdfstring += "</table>"
-        
+
         pdfstring += '<h3>Denied Proposal Budgets</h3>'
 
         if len(denied) == 0:
@@ -631,7 +641,7 @@ def grant_report(r_type, grant_id):
             for d in denied:
                 pdfstring += "<tr><td>"+d[12]+"</td><td>"+d[1]+"</td><td>"+str(d[15])+'</td><td>'+str(d[16])+"</td><td>"+d[17]+"</tr>"
             pdfstring += "</table>"
-        
+
         pdfstring += '<h3>Pending Proposal Budgets</h3>'
 
         if len(pending) == 0:
@@ -640,7 +650,7 @@ def grant_report(r_type, grant_id):
             pdfstring += "<table style='border: 1px solid black;'><tr><th>Name</th><th>Proposal Title</th><th>Budget Item Name</th><th>Cost</th><th>Justification</th></tr>"
             for p in pending:
                 pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[15])+'</td><td>'+str(p[16])+"</td><td>"+p[17]+"</tr>"
-            pdfstring += "</table>"    
+            pdfstring += "</table>"
 
         #cant figure out to how download this, will fix later
         conf = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
@@ -653,7 +663,7 @@ def grant_report(r_type, grant_id):
 
 @app.route('/reviewer_report/<pid>')
 def reviewer_report(pid):
-    reviewerList = select_where('reviewer', 'reviewed_proposals', 'proposal_id', pid)
+    reviewerList = select_where('reviewer', 'assigned_proposals', 'proposal_id', pid)
 
     count = len(reviewerList)
     sig = 0
@@ -670,7 +680,7 @@ def reviewer_report(pid):
         out += report[0][4]
         budg += report [0][5]
         comments.append(report[0][6])
-    
+
     print(count)
     #find averages
     sig = sig / count
