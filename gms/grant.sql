@@ -48,7 +48,7 @@ CREATE TABLE if not exists proposals(
   approved binary,
   approved_by INTEGER,
   submitted_by VARCHAR(255) NOT NULL,
-  assigned_reviewer VARCHAR(255),
+  assigned_reviewer binary,
   foreign KEY(assigned_reviewer) references reviewer(email),
   foreign KEY(submitted_by) references researcher(email),
   foreign KEY(grant_id) references grants(id),
@@ -58,22 +58,32 @@ CREATE TABLE if not exists proposals(
 CREATE TABLE if not exists reports(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   proposal_id int NOT NULL,
-  reviewer varchar(255) NOT NULL,
   assigned_by int,
   rev_reviewed datetime,
   completed binary,
-  FOREIGN KEY(reviewer) references reviewer(email),
   FOREIGN KEY(proposal_id) references proposals(id)
 );
 
 CREATE TABLE if not exists report_info(
-  id INTEGER PRIMARY KEY,
+  id INTEGER NOT NULL,
+  reviewer VARCHAR(255) NOT NULL,
   signifigance INTEGER NOT NULL,
   work_plan INTEGER NOT NULL,
   outcomes INTEGER NOT NULL,
   budget_proposal INTEGER NOT NULL,
   comments varchar(255) NOT NULL,
-  FOREIGN KEY (id) references reports(id)
+  FOREIGN KEY (id) references reports(id),
+  FOREIGN KEY (reviewer) references reviewed_proposals(reviewer),
+  PRIMARY KEY(id, reviewer)
+);
+
+
+CREATE TABLE if not exists reviewed_proposals(
+  proposal_id INTEGER NOT NULL,
+  reviewer VARCHAR(255) NOT NULL,
+  FOREIGN KEY(proposal_id) references proposals(id),
+  FOREIGN KEY(reviewer) references reviewer(email),
+  PRIMARY KEY(proposal_id, reviewer)
 );
 
 CREATE TABLE if not exists grants(

@@ -23,6 +23,7 @@
             <div class="panel" id="admin-panel">
                 {% if assign %}
                 {% for g in grant %}
+                {% if g[13] == 0 %}
                 <ul class="list-group">
                   <li class="list-group-item d-flex justify-content-between align-items-center"><a>{{ g[15] }} - {{ g[1] }} </a>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal{{g[0]}}">
@@ -49,17 +50,16 @@
                           <p>Summary: {{ g[2] | striptags }} </p>
 			                    <form action="{{ url_for('assign') }}" method="post">
                             <p>Reviewers in the {{g[22]}} Department:</p>
-                            <select name="remail" class="custom-select" id="inputGroupSelect0{{g[0]}}">
+                            <select id='original{{g[0]}}' name="remail{{g[0]}}" class="custom-select" multiple>
                               <option selected>Choose...</option>
                               {% for r in reviewer %}
                                 {% if r[3] == g[22] %}
 
-                               <option value="{{r[0]}} {{g[0]}}">{{r[1]}} {{r[2]}}</option>
+                               <option name='reviewer' value="{{r[0]}} {{g[0]}}">{{r[1]}} {{r[2]}}</option>
 
                                 {% endif %}
                               {% endfor %}
                             </select>
-
                             <button class="btn btn-default btn-md" value="assign">Assign</button>
                           </form>
                         </div>
@@ -72,6 +72,7 @@
                     </div>
                   </div>
                 </div>
+                {% endif %}
 		            {% endfor %}
                 {% else %}
                   <p> No grants to assign at this time</p>
@@ -81,7 +82,8 @@
             <input type="checkbox" id="arrow2">
             <label class="expand" id="target" for="arrow2"> Pending Final Decision</label>
             <div class="panel" id="admin-panel">
-                {% if pending %}
+              
+                {% if distinct %}
                 {% for p in pending %}
                 <div>
 		              {% if p[10] is none %}
@@ -119,15 +121,10 @@
                         <!-- Modal body -->
                         <div class="modal-body">
                           <p>Title: {{ p[1] }}</p>
+                          <a type='button' href="{{ url_for('reviewer_report', pid=p[0]) }}">Reviewer Report</a>
                           <br>
-                          <p>Summary: {{ p[2] | striptags }} </p>
                           <br>
 			                    <form  action="{{ url_for('decide', pro_id=p[0]) }}" method="post">
-                            <p>Signifigance = {{ re[1]}}</p>
-                            <p>Work Plan = {{ re[2]}}</p>
-                            <p>Outcomes = {{ re[3]}}</p>
-                            <p>Budget Proposal = {{ re[4]}}</p>
-                            <p>comments = {{ re[5] | striptags }}</p>
                             <button name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="accept">Accept</button>
                             <button name='decide' type="submit" class="btn btn-default btn-md" id="btn" value="decline">Decline</button>
                           </form>
@@ -158,16 +155,21 @@
             <div class="panel" id="admin-panel">
               <div class="d-flex w-100 justify-content-between">
                 <ul class="list-group">                  
-                    {% if total %}
                       {% for t in total %}
+                      {% if t != None %}
                       <li class="list-group-item d-flex justify-content-between align-items-center"></li>
                         Proposal #{{ t[0] }} Awarded: {{ "${:,.2f}".format(t[6]) }}
                       </li>
+                      {% endif %}
                       {% endfor %}
-                    {% endif %}
+                    
                 </ul>
                 {% for g in gt %}
+                {% if g[0] == None %}
+                <p id="awarded">Total Awarded to Date: $0</p>
+                {% else %}
                 <p id="awarded">Total Awarded to Date: {{ "${:,.2f}".format(g[0]) }}</p>
+                {% endif %}
                 {% endfor %}
               </div>
             </div>
