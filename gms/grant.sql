@@ -60,6 +60,7 @@ CREATE TABLE if not exists reports(
   proposal_id int NOT NULL,
   assigned_by int,
   rev_reviewed datetime,
+  completed binary,
   FOREIGN KEY(proposal_id) references proposals(id)
 );
 

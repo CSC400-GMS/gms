@@ -128,7 +128,7 @@ def dashboard():
         total = select_where('*', 'proposals', 'approved', '1')
         gt = select_sum('funding_re', 'proposals', 'approved', '1')
         distinct = select_where_null('DISTINCT proposal_id', 'reports', 'rev_reviewed')
-        print(approvals)
+
         return render_template('admindash.html', assign=assign, pending=approval, grant=grant, reviewer=reviewer, re_info=re_info, total=total, gt=gt, distinct=distinct)
 
     elif usertype == 'researcher':
@@ -476,21 +476,21 @@ def review_submit():
         #determine if all reports are in
         #initialize flag and create necesary reviewer list
         complete = True
-        rlist = []
+        # rlist = []
 
         #determine necesary reviewers for completion
-        necesary = select_where("*", 'assigned_proposals', 'proposal_id', pro_id)
-        for n in necesary:
-            reviewer = n[1]
-            rlist.append(reviewer)
+        # necesary = select_where("*", 'assigned_proposals', 'proposal_id', pro_id)
+        # for n in necesary:
+        #     reviewer = n[1]
+        #     rlist.append(reviewer)
 
         #check for reports submitted by all necesary reviewers
         #if check comes up empty, there are still pending reviews
-        for r in rlist:
-            check = select_where('reviewer', 'report_info', 'reviewer', r)
-            if not check:
-                complete = False
-                break
+        # for r in rlist:
+        #     check = select_where('reviewer', 'report_info', 'reviewer', r)
+        #     if not check:
+        #         complete = False
+        #         break
 
         if complete:
             sql = 'SELECT id FROM reports where proposal_id =\''+ pro_id +'\';'
@@ -501,6 +501,16 @@ def review_submit():
             sql = 'UPDATE assigned_proposals set completed = 1 where proposal_id =\''+ pro_id +'\' and reviewer= \''+ current_user.id +'\';'
             sql_script(sql)
 
+            pro_count = count_assigned_proposals(pro_id)
+            assigned_pros = select_where('*', 'assigned_proposals', 'proposal_id', pro_id)
+            count = 0
+            for x in assigned_pros:
+                if x[2] == 1:
+                    count += 1
+
+            if count == pro_count[0][0]:
+                sql = 'UPDATE reports set completed = 1 where proposal_id =\''+ pro_id +'\';'
+                sql_script(sql)
 
     #Send admin a notif that a reviewer completed their review
     db = get_db()
