@@ -6,7 +6,7 @@
       <title>Dashboard</title>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"crossorigin="anonymous">
       <link rel="preconnect" href="https://fonts.gstatic.com">
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500&display=swap" rel="stylesheet">
       <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
@@ -17,8 +17,8 @@
       <div class="gs-container">
         <div class="gs-item">    
           <input type="checkbox" id="arrow1">
-          <label class="expand" id="target" for="arrow1"> Recently Added Grants </label> 
-          <div class="panel" id="gs-panel">
+          <label class="gs-expand" id="target" for="arrow1"> Recently Added Grants </label> 
+          <div class="gs-panel" id="gs-panel">
           {% if grant %}
           <table class=" table table-hover table-borderless" id="gs-table">
             <thead>
@@ -28,7 +28,7 @@
               </tr>
             </thead>
             <tbody>
-            {% for g in grant %}
+            {% for g in grant[]|reverse %}
             <tr onclick="window.location.href='{{ url_for('showGrant', grantid=g[0]) }}'">
               <td> {{ g[1] }} </td>
               <td> {{ g[5] }} </td>
@@ -43,8 +43,8 @@
         </div>
         <div class="gs-item">
           <input type="checkbox" id="arrow2">
-          <label class="expand" id="target" for="arrow2"> Pending Applications</label> 
-          <div class="panel" id="gs-panel">
+          <label class="gs-expand" id="target" for="arrow2"> Pending Applications</label> 
+          <div class="gs-panel" id="gs-panel">
           {% if pending is not none %}
           <table class=" table table-hover table-borderless" id="gs-table">
             <thead>
@@ -71,8 +71,8 @@
         </div>
         <div class="gs-item">
           <input type="checkbox" id="arrow3">
-          <label class="expand" id="target" for="arrow3"> Proposal History</label> 
-          <div class="panel" id="gs-panel">
+          <label class="gs-expand" id="target" for="arrow3"> Proposal History</label> 
+          <div class="gs-panel" id="gs-panel">
             {% if done is not none %}
             <table class=" table table-hover table-borderless" id="gs-table">
               <thead>
@@ -108,7 +108,7 @@
       </div>
 
       <script>
-        var exp = document.getElementsByClassName("expand");
+        var exp = document.getElementsByClassName("gs-expand");
         var i;
 
         for (i = 0; i < exp.length; i++) {

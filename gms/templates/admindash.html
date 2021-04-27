@@ -6,7 +6,9 @@
       <title>Dashboard</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
       <link rel="preconnect" href="https://fonts.gstatic.com">
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+      <link rel="preconnect" href="https://fonts.gstatic.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500&display=swap" rel="stylesheet">
       <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -19,8 +21,8 @@
         <div class="admin-container">
           <div class="admin-item">
             <input type="checkbox" id="arrow1">
-            <label class="expand" id="target" for="arrow1"> Assign to Reviewers </label>
-            <div class="panel" id="admin-panel">
+            <label class="admin-expand" id="target" for="arrow1"> Assign to Reviewers </label>
+            <div class="admin-panel" id="admin-panel">
                 {% if assign %}
                 {% for g in grant %}
                 <ul class="list-group">
@@ -79,8 +81,8 @@
           </div>
           <div class="admin-item">
             <input type="checkbox" id="arrow2">
-            <label class="expand" id="target" for="arrow2"> Pending Final Decision</label>
-            <div class="panel" id="admin-panel">
+            <label class="admin-expand" id="target" for="arrow2"> Pending Final Decision</label>
+            <div class="admin-panel" id="admin-panel">
                 {% if pending %}
                 {% for p in pending %}
                 <div>
@@ -154,8 +156,8 @@
 
           <div class="admin-item">
             <input type="checkbox" id="arrow3">
-            <label class="expand" id="target" for="arrow3"> Awarded to Date </label>
-            <div class="panel" id="admin-panel">
+            <label class="admin-expand" id="target" for="arrow3"> Awarded to Date </label>
+            <div class="admin-panel" id="admin-panel">
               <div class="d-flex w-100 justify-content-between">
                 <ul class="list-group">                  
                     {% if total %}
@@ -175,7 +177,7 @@
         </div>
 
           <script>
-            var exp = document.getElementsByClassName("expand");
+            var exp = document.getElementsByClassName("admin-expand");
             var i;
 
             for (i = 0; i < exp.length; i++) {

@@ -6,7 +6,8 @@
     <title>Registration</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='styles/style.css') }}" rel="stylesheet" type="text/css" />
   </head>
   <body class="dark-mode">
@@ -34,7 +35,7 @@
               <div class="form-group">
                 <input type="dept" class="form-control" name="dept" placeholder="dept">
               </div>
-              <p style="font-weight: 700;">You Are A...</p>
+              <p>You Are A...</p>
               <div class="form-check-inline">
                 <label class="form-check-label">
                   <input type="radio" class="form-check-input" name="userclass" value="researcher" onclick="delete_fields('gs');add_fields('gs');">A Grantseeker
@@ -69,13 +70,13 @@
 
 		if(u == 'gs') {
 		//check if fields exist
-		var $label = $("<div class='form-group' id='label' style='font-weight: 700;'><p>Just a little more info...</p></div>");
+		var $label = $("<div class='form-group' id='label'><p>Just a little more info...</p></div>");
 		var $time = $("<div class='form-check-inline' name='time'><label class='form-check-label'><input type='radio' class='form-check-input' name='status' value='full'>Full Time</label></div><div class='form-check-inline'><label class='form-check-label' name='time'><input type='radio' class='form-check-input' name='status' value='part'>Part Time</label></div>");
 		($label).insertAfter('#check');
 		($time).insertAfter('#label');
 		}
     else if (u == 'admin') {
-      var $label = $("<div class='form-group' id='label'><p style='font-weight: 700;'>Just a little more info...</p></div>");
+      var $label = $("<div class='form-group' id='label'><p>Just a little more info...</p></div>");
       var $num = $("<div class='form-group' id='num'><input type='num' class='form-control' name='num' placeholder='ID Number'></div>");
       ($label).insertAfter('#check');
       ($num).insertAfter('#label');
