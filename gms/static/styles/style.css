@@ -372,7 +372,7 @@ input[type='checkbox']:checked + label:before{
   padding: 15px;
   background-color: var(--divColor);
   border-radius: 5px;
-  width: 700px;
+  width: 1000px;
   height: 100%;
 }
 
