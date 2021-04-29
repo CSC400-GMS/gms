@@ -629,7 +629,7 @@ def grant_report(r_type, grant_id):
         else:
             pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Budget Item Name</th><th>Cost</th><th>Justification</th></tr>"
             for a in accepted:
-                pdfstring += "<tr><td>"+a[12]+"</td><td>"+a[1]+"</td><td>"+str(a[15])+'</td><td>'+str(a[16])+"</td><td>"+a[17]+"</tr>"
+                pdfstring += "<tr><td>"+str(a[12])+"</td><td>"+str(a[1])+"</td><td>"+str(a[15])+'</td><td>'+str(a[16])+"</td><td>"+str(a[17])+"</tr>"
             pdfstring += "</table>"
 
         pdfstring += '<h3>Denied Proposal Budgets</h3>'
@@ -639,7 +639,7 @@ def grant_report(r_type, grant_id):
         else:
             pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Budget Item Name</th><th>Cost</th><th>Justification</th></tr>"
             for d in denied:
-                pdfstring += "<tr><td>"+d[12]+"</td><td>"+d[1]+"</td><td>"+str(d[15])+'</td><td>'+str(d[16])+"</td><td>"+d[17]+"</tr>"
+                pdfstring += "<tr><td>"+str(d[12])+"</td><td>"+str(d[1])+"</td><td>"+str(d[15])+'</td><td>'+str(d[16])+"</td><td>"+str(d[17])+"</tr>"
             pdfstring += "</table>"
 
         pdfstring += '<h3>Pending Proposal Budgets</h3>'
@@ -649,7 +649,7 @@ def grant_report(r_type, grant_id):
         else:
             pdfstring += "<table style='border: 1px solid black;'><tr><th>Name</th><th>Proposal Title</th><th>Budget Item Name</th><th>Cost</th><th>Justification</th></tr>"
             for p in pending:
-                pdfstring += "<tr><td>"+p[12]+"</td><td>"+p[1]+"</td><td>"+str(p[15])+'</td><td>'+str(p[16])+"</td><td>"+p[17]+"</tr>"
+                pdfstring += "<tr><td>"+str(p[12])+"</td><td>"+str(p[1])+"</td><td>"+str(p[15])+'</td><td>'+str(p[16])+"</td><td>"+str(p[17])+"</tr>"
             pdfstring += "</table>"
 
         #cant figure out to how download this, will fix later
