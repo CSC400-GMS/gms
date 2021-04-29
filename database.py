@@ -94,6 +94,7 @@ def join_where_null(col, table1, table2, x, y, z):
     l = c.fetchall()
     return l
 
+
 def join(col, table1, table2, x, y):
     db = get_db()
     c = db.cursor()

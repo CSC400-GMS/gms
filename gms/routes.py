@@ -674,7 +674,7 @@ def reviewer_report(pid):
 
     #gather totals
     for reviewer in reviewerList:
-        report = select_where('*', 'report_info', 'reviewer', reviewer[0])
+        report = select_where('*', 'report_info', 'id='+pid+' AND reviewer', reviewer[0])
         sig += report[0][2]
         work += report[0][3]
         out += report[0][4]

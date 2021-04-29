@@ -72,7 +72,6 @@ CREATE TABLE if not exists report_info(
   outcomes INTEGER NOT NULL,
   budget_proposal INTEGER NOT NULL,
   comments varchar(255) NOT NULL,
-  FOREIGN KEY (id) references reports(id),
   FOREIGN KEY (reviewer) references assigned_proposals(reviewer),
   PRIMARY KEY(id, reviewer)
 );
