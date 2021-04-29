@@ -558,9 +558,9 @@ def grant_report(r_type, grant_id):
         if len(accepted) == 0:
             pdfstring += "<p>No proposals accepted at this time</p>"
         else:
-            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Awarded Funding</th><th>Reviewer</th></tr>"
+            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Awarded Funding</th></tr>"
             for a in accepted:
-                pdfstring += "<tr><td>"+str(a[12])+"</td><td>"+str(a[1])+"</td><td>"+str(a[6])+'</td><td>'+str(a[13])+"</td></tr>"
+                pdfstring += "<tr><td>"+str(a[12])+"</td><td>"+str(a[1])+"</td><td>"+str(a[6])+"</td></tr>"
             pdfstring += "</table>"
 
         pdfstring += '<h3>Denied Proposals</h3>'
@@ -568,9 +568,9 @@ def grant_report(r_type, grant_id):
         if len(denied) == 0:
             pdfstring += "No proposals denied at this time"
         else:
-            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
+            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th></tr>"
             for d in denied:
-                pdfstring += "<tr><td>"+str(d[12])+"</td><td>"+str(d[1])+"</td><td>"+str(d[6])+'</td><td>'+str(d[13])+"</td></tr>"
+                pdfstring += "<tr><td>"+str(d[12])+"</td><td>"+str(d[1])+"</td><td>"+str(d[6])+"</td></tr>"
             pdfstring += "</table>"
 
         pdfstring += '<h3>Pending Proposals</h3>'
@@ -578,12 +578,12 @@ def grant_report(r_type, grant_id):
         if len(pending) == 0:
             pdfstring += "No proposals pending at this time"
         else:
-            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th><th>Reviewer</th></tr>"
+            pdfstring += "<table><tr><th>Name</th><th>Proposal Title</th><th>Funding</th></tr>"
             for p in pending:
                 if p[13]:
-                    pdfstring += "<tr><td>"+str(p[12])+"</td><td>"+str(p[1])+"</td><td>"+str(p[6])+'</td><td>'+str(p[13])+"</td></tr>"
+                    pdfstring += "<tr><td>"+str(p[12])+"</td><td>"+str(p[1])+"</td><td>"+str(p[6])+"</td></tr>"
                 else:
-                    pdfstring += "<tr><td>"+str(p[12])+"</td><td>"+str(p[1])+"</td><td>"+str(p[6])+'</td><td>No Reviewer Assigned</td></tr>'
+                    pdfstring += "<tr><td>"+str(p[12])+"</td><td>"+str(p[1])+"</td><td>"+str(p[6])+'</td></tr>'
             pdfstring += "</table>"
 
         #cant figure out to how download this, will fix later
